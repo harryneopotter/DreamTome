@@ -390,13 +390,7 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
 }
 
-/* === CRITICAL: All dream card content above artifacts === */
-.flippable-card-container,
-.card-face,
-.dream-card {
-  position: relative;
-  z-index: 50000 !important;
-}
+
 
 /* === CRITICAL: Search bar above artifacts === */
 .desk-content-wrapper > div > div > div:first-child {

@@ -1,14 +1,18 @@
+import { useState, useRef, useEffect } from 'react';
 import { Dream } from '../types';
+import DreamCardArtifacts from './DreamCardArtifacts';
+import { getDreamInsight } from '../utils/dreamInterpreter';
 
-interface ExportCardProps {
+interface FlippableDreamCardProps {
   dream: Dream;
+  onExpand: () => void;
 }
 
 const categoryConfig = {
-  Serene: { emoji: '🌸', color: '#C8E6E6', gradient: 'linear-gradient(135deg, #C8E6E6 0%, #A8C6C6 100%)' },
-  Strange: { emoji: '🔮', color: '#CFA1E8', gradient: 'linear-gradient(135deg, #CFA1E8 0%, #AF81C8 100%)' },
-  Nightmare: { emoji: '🌑', color: '#D37C7C', gradient: 'linear-gradient(135deg, #D37C7C 0%, #B35C5C 100%)' },
-  Epic: { emoji: '⚔️', color: '#F9C784', gradient: 'linear-gradient(135deg, #F9C784 0%, #D9A764 100%)' },
+  Serene: { emoji: '🌸', color: 'bg-blue-100 text-blue-800' },
+  Strange: { emoji: '🔮', color: 'bg-purple-100 text-purple-800' },
+  Nightmare: { emoji: '🌑', color: 'bg-red-100 text-red-800' },
+  Epic: { emoji: '⚔️', color: 'bg-amber-100 text-amber-800' },
 };
 
 const tagConfig: Record<string, { emoji: string; color: string }> = {
@@ -21,179 +25,278 @@ const tagConfig: Record<string, { emoji: string; color: string }> = {
   Prophetic: { emoji: '🔮', color: '#E7D6A7' },
 };
 
-/**
- * Smart truncation that breaks at word boundaries
- */
-function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  
-  // Find the last space before maxLength
-  const truncated = text.substring(0, maxLength);
-  const lastSpace = truncated.lastIndexOf(' ');
-  
-  // If we found a space, break there. Otherwise, use the hard limit
-  return lastSpace > 0 ? truncated.substring(0, lastSpace) + '...' : truncated + '...';
-}
+export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCardProps) {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [insight, setInsight] = useState(() => getDreamInsight(dream.content));
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const frontFaceRef = useRef<HTMLDivElement | null>(null);
 
-export default function ExportCard({ dream }: ExportCardProps) {
+  const [cardHeight, setCardHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    setInsight(getDreamInsight(dream.content));
+  }, [dream.content]);
+
+  useEffect(() => {
+    const measure = () => {
+      if (frontFaceRef.current) {
+        setCardHeight(frontFaceRef.current.offsetHeight);
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [dream]);
+
+  useEffect(() => {
+    if (!isFlipped) return;
+
+    const handleEsc = (e: KeyboardEvent) => e.key === 'Escape' && setIsFlipped(false);
+
+    const handleClickOut = (e: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+        setIsFlipped(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEsc);
+    document.addEventListener('mousedown', handleClickOut);
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+      document.removeEventListener('mousedown', handleClickOut);
+    };
+  }, [isFlipped]);
+
+  const flipToInsight = () => {
+    setIsFlipped(true);
+    if (audioRef.current) {
+      const a = audioRef.current;
+      a.volume = 0.3;
+      a.currentTime = 0;
+      a.play().catch(() => {});
+    }
+  };
+
+  const flipBack = () => setIsFlipped(false);
+
   const config = categoryConfig[dream.category];
-  
-  // Smart truncation for title (max ~60 chars for 2 lines at 56px font)
-  const truncatedTitle = truncateText(dream.title, 60);
-  
-  // Smart truncation for content (max ~280 chars for 4 lines at 24px font)
-  const truncatedContent = truncateText(dream.content, 280);
-  
-  // Format date
-  const formattedDate = new Date(dream.date).toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
 
   return (
-    <div
-      id="dream-export-card"
-      style={{
-        position: 'fixed',
-        left: '-99999px',
-        top: '-99999px',
-        width: '1200px',
-        height: '630px',
-        background: 'linear-gradient(135deg, #f9e6c8 0%, #e8d4b0 100%)',
-        borderRadius: '24px',
-        border: '8px solid #D4AF37',
-        padding: '60px 70px',
-        boxSizing: 'border-box',
-        fontFamily: "'Spectral', serif",
-        color: '#2A1B0F',
-        overflow: 'hidden',
-        visibility: 'hidden',
-        pointerEvents: 'none',
-        zIndex: -1,
-      }}
-    >
-      {/* Background accent based on category */}
+    <>
       <div
+        ref={cardRef}
+        className="relative flippable-card"
         style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '400px',
-          height: '100%',
-          background: config.gradient,
-          opacity: 0.15,
-          borderRadius: '0 16px 16px 0',
+          perspective: '1500px',
+          transformStyle: 'preserve-3d',
+          zIndex: 50000,
         }}
-      />
-
-      {/* Content */}
-      <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        {/* Category Badge */}
-        <div style={{ marginBottom: '20px' }}>
-          <span
-            style={{
-              display: 'inline-block',
-              padding: '10px 20px',
-              borderRadius: '999px',
-              fontSize: '18px',
-              fontWeight: '600',
-              backgroundColor: config.color,
-              color: '#2A1B0F',
-              fontFamily: "'Spectral', serif",
-            }}
-          >
-            {config.emoji} {dream.category}
-          </span>
-        </div>
-
-        {/* Title */}
-        <h1
-          style={{
-            fontFamily: "'Cormorant Unicase', serif",
-            fontSize: '56px',
-            fontWeight: '700',
-            lineHeight: '1.2',
-            marginBottom: '28px',
-            color: '#8B4049',
-            wordWrap: 'break-word',
-            overflowWrap: 'break-word',
-            hyphens: 'none',
-          }}
-        >
-          {truncatedTitle}
-        </h1>
-
-        {/* Content Excerpt */}
-        <p
-          style={{
-            fontFamily: "'Spectral', serif",
-            fontSize: '24px',
-            lineHeight: '1.65',
-            marginBottom: '28px',
-            flex: '1',
-            wordWrap: 'break-word',
-            overflowWrap: 'break-word',
-            hyphens: 'none',
-          }}
-        >
-          {truncatedContent}
-        </p>
-
-        {/* Tags */}
-        {dream.tags && dream.tags.length > 0 && (
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '28px', flexWrap: 'wrap' }}>
-            {dream.tags.slice(0, 4).map((tag) => (
-              <span
-                key={tag}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '999px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  backgroundColor: tagConfig[tag]?.color || '#E8D4B0',
-                  color: '#2A1B0F',
-                  fontFamily: "'Spectral', serif",
-                }}
-              >
-                {tagConfig[tag]?.emoji} {tag}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Footer */}
+      >
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingTop: '20px',
-            borderTop: '2px solid rgba(42, 27, 15, 0.2)',
-            marginTop: 'auto',
+            width: '100%',
+            height: cardHeight ? `${cardHeight}px` : 'auto',
+            transformStyle: 'preserve-3d',
+            transition: 'transform 0.7s ease-in-out',
+            transform: isFlipped ? 'rotateY(180deg) scale(1.05)' : 'rotateY(0deg)',
+            position: 'relative',
           }}
         >
-          <div style={{ 
-            fontFamily: "'Spectral', serif",
-            fontSize: '20px', 
-            fontWeight: '600', 
-            opacity: 0.7 
-          }}>
-            {formattedDate}
-          </div>
+          {/* FRONT */}
           <div
+            ref={frontFaceRef}
+            className="absolute inset-0 parchment-panel p-5 dream-card"
             style={{
-              fontFamily: "'Cormorant Unicase', serif",
-              fontSize: '32px',
-              fontWeight: '700',
-              color: '#D4AF37',
-              textShadow: '0 0 10px rgba(212, 175, 55, 0.3)',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              borderRadius: '12px',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
+              position: 'absolute',
+              zIndex: 2,
             }}
           >
-            DreamTome
+            <DreamCardArtifacts onInterpret={flipToInsight} onExpand={onExpand} />
+
+            <div className="flex items-start justify-between mb-3 mt-8">
+              <h3
+                className="text-xl font-semibold text-[var(--burgundy)] line-clamp-2 flex-1"
+                style={{ fontFamily: "'Cormorant Unicase', serif" }}
+              >
+                {dream.title}
+              </h3>
+            </div>
+
+            <p
+              className="text-sm opacity-70 line-clamp-3 mb-4"
+              style={{ fontFamily: 'Spectral, serif' }}
+            >
+              {dream.content}
+            </p>
+
+            {dream.tags?.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {dream.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2 py-1 rounded-full text-xs font-medium"
+                    style={{
+                      backgroundColor: tagConfig[tag]?.color || '#E8D4B0',
+                      color: '#2A1B0F',
+                    }}
+                  >
+                    {tagConfig[tag]?.emoji} {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between">
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.color}`}>
+                {config.emoji} {dream.category}
+              </span>
+              <span className="text-xs opacity-50">{new Date(dream.date).toLocaleDateString()}</span>
+            </div>
+          </div>
+
+          {/* BACK */}
+          <div
+            className="absolute inset-0"
+            style={{
+              transform: 'rotateY(180deg)',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              position: 'absolute',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Parchment container */}
+            <div
+              style={{
+                flex: 1,
+                margin: '10px',
+                padding: '18px 20px',
+                background: 'linear-gradient(180deg, #f7ecd1, #e8d9b8)',
+                borderRadius: '14px',
+                border: '3px solid #d7c287',
+                boxShadow:
+                  '0 10px 26px rgba(0,0,0,0.35), inset 0 0 18px rgba(0,0,0,0.15)',
+                overflow: 'hidden',
+                position: 'relative',
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  overflowY: 'auto',
+                  paddingRight: '10px',
+                }}
+              >
+                {/* Emotion */}
+                <h3 style={{ color: '#7a5c40', fontSize: '0.9rem' }}>EMOTION</h3>
+                <p
+                  style={{
+                    color: '#6a1f1f',
+                    marginTop: '-4px',
+                    marginBottom: '16px',
+                    fontSize: '1.05rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  {insight.emotion}
+                </p>
+
+                {/* Symbols */}
+                {insight.symbols?.length > 0 && (
+                  <>
+                    <h3 style={{ color: '#7a5c40', fontSize: '0.9rem' }}>SYMBOLS</h3>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '8px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      {insight.symbols.map((sym) => (
+                        <span
+                          key={sym}
+                          style={{
+                            background: '#fff3d6',
+                            border: '1px solid #e0c88b',
+                            padding: '5px 11px',
+                            borderRadius: 999,
+                            color: '#7a5c40',
+                            fontSize: '0.85rem',
+                            fontWeight: 500,
+                          }}
+                        >
+                          {sym}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Interpretation */}
+                <h3 style={{ color: '#7a5c40', fontSize: '0.9rem' }}>INTERPRETATION</h3>
+                <p
+                  style={{
+                    color: '#4b2f1e',
+                    lineHeight: 1.6,
+                    marginTop: '-4px',
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
+                  {insight.interpretation}
+                </p>
+              </div>
+
+              {/* Close button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  flipBack();
+                }}
+                style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '12px',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '999px',
+                  border: '1px solid #d7c287',
+                  background: 'rgba(0,0,0,0.04)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.1rem',
+                  cursor: 'pointer',
+                }}
+              >
+                ×
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {isFlipped && (
+        <div
+          className="fixed inset-0 pointer-events-none"
+          style={{
+            zIndex: 40,
+            background:
+              'radial-gradient(circle at center, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.45) 100%)',
+          }}
+        />
+      )}
+
+      <audio ref={audioRef} preload="auto" src="/page-turn.mp3" />
+    </>
   );
 }
