@@ -1,17 +1,13 @@
 import { NavLink } from 'react-router-dom';
-import { useRef } from 'react';
+import { useSound } from '../hooks/useSound';
 
 export default function MedievalArtifactNav() {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { play } = useSound();
 
   const handleArtifactClick = (e: React.MouseEvent) => {
     // Don't prevent default - let NavLink handle navigation
-    if (audioRef.current) {
-      const audio = audioRef.current;
-      audio.volume = 0.25;
-      audio.currentTime = 0;
-      audio.play().catch((err) => console.log('Audio blocked:', err.message));
-    }
+    (e.currentTarget as HTMLElement).blur();
+    play('pageTurn');
   };
 
   return (
@@ -62,8 +58,6 @@ export default function MedievalArtifactNav() {
         <span className="artifact-label">Reflections</span>
       </NavLink>
 
-      {/* Audio element */}
-      <audio ref={audioRef} preload="auto" src="/page-turn.mp3"></audio>
     </>
   );
 }

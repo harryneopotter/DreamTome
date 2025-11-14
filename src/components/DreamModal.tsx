@@ -5,6 +5,7 @@ import { useDreams } from '../hooks/useDreams';
 import ExportCard from './ExportCard';
 import Toast from './Toast';
 import { exportDreamAsPNG } from '../utils/exportDream';
+import ArcaneButton from './ArcaneButton';
 
 interface DreamModalProps {
   dream: Dream;
@@ -65,7 +66,8 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-black/10 rounded-lg transition-colors"
+            className="absolute top-4 right-4 w-9 h-9 rounded-full border border-[var(--burgundy)]/40 flex items-center justify-center bg-white/20 hover:bg-white/30 transition-colors"
+            aria-label="Close"
           >
             <X />
           </button>
@@ -96,24 +98,20 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
                 style={{ fontFamily: 'Spectral, serif' }}
                 rows={10}
               />
-              <div className="flex gap-3 mt-4">
-                <button
-                  onClick={handleSave}
-                  className="flex-1 bg-[var(--gold)] text-[var(--parchment-dark)] py-2 rounded-lg font-medium hover:bg-[#c9a332] transition-all"
-                  style={{ fontFamily: "'Marcellus SC', serif" }}
-                >
+              <div className="flex flex-wrap gap-3 mt-4">
+                <ArcaneButton onClick={handleSave} className="flex-1 justify-center">
                   Save Changes
-                </button>
-                <button
+                </ArcaneButton>
+                <ArcaneButton
+                  variant="ghost"
                   onClick={() => {
                     setEditedContent(dream.content);
                     setIsEditing(false);
                   }}
-                  className="px-6 py-2 bg-gray-300 text-[var(--parchment-dark)] rounded-lg font-medium hover:bg-gray-400 transition-all"
-                  style={{ fontFamily: 'Spectral, serif' }}
+                  className="flex-1 justify-center"
                 >
                   Cancel
-                </button>
+                </ArcaneButton>
               </div>
             </div>
           ) : (
@@ -125,11 +123,10 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
           )}
 
           <div className="flex flex-wrap gap-3 pt-4 border-t border-[var(--parchment-dark)]/20">
-            <button
+            <ArcaneButton
               onClick={handleExport}
               disabled={isExporting}
-              className="flex items-center gap-2 px-4 py-2 bg-[var(--gold)] text-[var(--parchment-dark)] rounded-lg font-medium hover:bg-[#c9a332] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ fontFamily: "'Marcellus SC', serif" }}
+              className="flex items-center gap-2"
             >
               {isExporting ? (
                 <>
@@ -146,25 +143,25 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
                   Export Card (PNG)
                 </>
               )}
-            </button>
-            
-            <button
+            </ArcaneButton>
+
+            <ArcaneButton
+              variant="secondary"
               onClick={() => setIsEditing(!isEditing)}
-              className="flex items-center gap-2 px-4 py-2 bg-[var(--burgundy)] text-white rounded-lg font-medium hover:bg-[#6d3039] transition-all"
-              style={{ fontFamily: "'Marcellus SC', serif" }}
+              className="flex items-center gap-2"
             >
               <Edit />
-              Edit
-            </button>
-            
-            <button
+              {isEditing ? 'Finish Editing' : 'Edit'}
+            </ArcaneButton>
+
+            <ArcaneButton
+              variant="ghost"
               onClick={handleDelete}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all"
-              style={{ fontFamily: "'Marcellus SC', serif" }}
+              className="flex items-center gap-2"
             >
               <Trash />
               Delete
-            </button>
+            </ArcaneButton>
           </div>
         </div>
       </div>

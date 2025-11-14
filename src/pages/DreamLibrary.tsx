@@ -4,6 +4,7 @@ import { Dream } from '../types';
 import DreamModal from '../components/DreamModal';
 import SearchBar from '../components/SearchBar';
 import FlippableDreamCard from '../components/FlippableDreamCard';
+import ArcaneButton from '../components/ArcaneButton';
 
 const categoryConfig = {
   Serene: { emoji: '🌸', color: 'bg-blue-100 text-blue-800' },
@@ -13,9 +14,11 @@ const categoryConfig = {
 };
 
 export default function DreamLibrary() {
-  const { dreams } = useDreams();
+  const { dreams, addTestDreams, clearTestDreams } = useDreams();
   const [selectedDream, setSelectedDream] = useState<Dream | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const hasTestDreams = dreams.some((dream) => dream.isTest);
 
   const filteredDreams = dreams.filter((dream) => {
     const query = searchQuery.toLowerCase();
@@ -28,9 +31,21 @@ export default function DreamLibrary() {
   return (
     <div className="min-h-screen px-4 py-8 fade-in">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-5xl md:text-6xl font-bold text-center mb-8 glow-text" style={{ fontFamily: "'Cormorant Unicase', serif" }}>
-          Dream Scrolls
-        </h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+          <h1 className="text-5xl md:text-6xl font-bold text-center md:text-left glow-text flex-1" style={{ fontFamily: "'Cormorant Unicase', serif" }}>
+            Dream Scrolls
+          </h1>
+          <div className="flex justify-center md:justify-end gap-3">
+            <ArcaneButton onClick={() => addTestDreams(5)} className="whitespace-nowrap">
+              Generate 5 Dreams
+            </ArcaneButton>
+            {hasTestDreams && (
+              <ArcaneButton variant="ghost" onClick={clearTestDreams} className="whitespace-nowrap">
+                Clear Test Dreams
+              </ArcaneButton>
+            )}
+          </div>
+        </div>
 
         {dreams.length > 0 && (
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
