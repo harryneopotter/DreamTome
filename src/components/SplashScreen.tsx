@@ -1,136 +1,86 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSound } from '../hooks/useSound';
+import { useEffect, useState } from 'react';
+import TomePage from '../pages/Tome';
+import DreamTomeBook from '../assets/dreamBook.svg';
+import candleImg from '../assets/candle.webp';
+import quillImg from '../assets/quill.webp';
 
 interface SplashScreenProps {
-  onComplete: () => void;
+  onComplete?: () => void;
 }
 
-const TRANSITION_DURATION = 850;
-const SWIRL_DELAY = 220;
+const KAMUI_DURATION = 1100;
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const navigate = useNavigate();
-  const { play, stop } = useSound();
-  const [isOpening, setIsOpening] = useState(false);
-  const [isFading, setIsFading] = useState(false);
-  const [showSwirl, setShowSwirl] = useState(false);
-  const [showDust, setShowDust] = useState(false);
-  const exitTimeout = useRef<number | null>(null);
-  const fadeTimeout = useRef<number | null>(null);
-  const swirlTimeout = useRef<number | null>(null);
-  const rustleTimeout = useRef<number | null>(null);
+  const [kamui, setKamui] = useState(false);
 
   useEffect(() => {
-    play('ambientCandle');
-    const dustFrame = requestAnimationFrame(() => setShowDust(true));
-
-    return () => {
-      cancelAnimationFrame(dustFrame);
-      stop('ambientCandle');
-      if (exitTimeout.current !== null) {
-        window.clearTimeout(exitTimeout.current);
-      }
-      if (fadeTimeout.current !== null) {
-        window.clearTimeout(fadeTimeout.current);
-      }
-      if (swirlTimeout.current !== null) {
-        window.clearTimeout(swirlTimeout.current);
-      }
-      if (rustleTimeout.current !== null) {
-        window.clearTimeout(rustleTimeout.current);
-      }
-    };
-  }, [play, stop]);
-
-  const proceedToTome = useCallback(() => {
-    if (isOpening) {
+    if (!kamui) {
       return;
     }
-    setIsOpening(true);
-    play('bookOpen');
-    rustleTimeout.current = window.setTimeout(() => play('pageRustle'), 140);
 
-    swirlTimeout.current = window.setTimeout(() => {
-      setShowSwirl(true);
-      fadeTimeout.current = window.setTimeout(() => {
-        setIsFading(true);
-      }, SWIRL_DELAY);
-    }, 120);
+    const timeoutId = window.setTimeout(() => {
+      onComplete?.();
+    }, KAMUI_DURATION);
 
-    exitTimeout.current = window.setTimeout(() => {
-      stop('ambientCandle');
-      navigate('/tome');
-      onComplete();
-    }, TRANSITION_DURATION);
-  }, [isOpening, navigate, onComplete, play, stop]);
-
-  useEffect(() => {
-    const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        proceedToTome();
-      }
+    return () => {
+      window.clearTimeout(timeoutId);
     };
+  }, [kamui, onComplete]);
 
-    window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
-  }, [proceedToTome]);
+  const handleWaxSealClick = () => {
+    if (kamui) {
+      return;
+    }
+    setKamui(true);
+  };
 
   return (
-    <div className={`desk-root ${isFading ? 'desk-fade' : ''}`}>
-      <div className={`ink-splash ${showSwirl ? 'active' : ''}`} aria-hidden />
-      <div className={`dust-field ${showDust ? 'active' : ''}`} aria-hidden />
-
-      <div className="static candle" aria-hidden>
-        <div className="candle-shadow" />
-        <div className="candle-body" />
-        <div className="candle-flame" />
-        <div className="candle-glow" />
+    <div className="fixed inset-0 z-50 overflow-hidden">
+      <div
+        className={`absolute inset-0 transition-opacity duration-700 ${kamui ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        aria-hidden={!kamui}
+      >
+        <TomePage />
       </div>
-
-      <div className="static quill" aria-hidden>
-        <div className="quill-feather" />
-        <div className="quill-shaft" />
-        <div className="ink-well" />
-      </div>
-
-      <div className="static letters" aria-hidden>
-        <div className="letter-sheet" />
-        <div className="letter-sheet second" />
-      </div>
-
-      <div className="static wax" aria-hidden>
-        <div className="wax-stamp" />
-        <div className="wax-ribbon" />
-      </div>
-
-      <div className="static key" aria-hidden>
-        <div className="key-ring" />
-        <div className="key-teeth" />
-      </div>
-
-      <div className="book-halo" aria-hidden />
 
       <div
-        className={`book-container ${isOpening ? 'opening' : ''}`}
-        role="button"
-        tabIndex={0}
-        onClick={proceedToTome}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            proceedToTome();
-          }
-        }}
+        className={`absolute inset-0 z-10 flex min-h-screen w-full items-center justify-center bg-deskTexture transition-opacity duration-500 ${kamui ? 'opacity-0 delay-[650ms]' : 'opacity-100'}`}
       >
-        <div className={`tome ${isOpening ? 'open' : ''}`}>
-          <div className="tome-cover" aria-hidden />
-          <div className="tome-pages" aria-hidden />
-          <div className="tome-spine" aria-hidden />
-          <div className="tome-shine" aria-hidden />
+        <div className="relative h-full w-full max-w-6xl">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(0,0,0,0.2),_transparent_55%)]" aria-hidden />
+
+          <img
+            src={candleImg}
+            alt="Candle resting on the desk"
+            className="absolute left-10 top-20 w-40 select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)]"
+            draggable={false}
+          />
+
+          <img
+            src={quillImg}
+            alt="Quill resting on an inkpot"
+            className="absolute right-16 top-40 w-32 select-none drop-shadow-[0_16px_32px_rgba(0,0,0,0.45)]"
+            draggable={false}
+          />
+
+          <div
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform-gpu transition-all duration-[1100ms] ${kamui ? 'kamui-implosion' : ''}`}
+          >
+            <DreamTomeBook className="w-[480px] drop-shadow-2xl transition-transform duration-700 ease-[cubic-bezier(.22,.61,.36,1)] hover:-rotate-2 hover:scale-[1.02]" />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleWaxSealClick}
+            className={`absolute bottom-20 left-1/2 flex h-32 w-32 -translate-x-1/2 items-center justify-center bg-waxSeal bg-cover transition-transform duration-500 hover:scale-110 focus-visible:scale-110 focus-visible:outline-none ${kamui ? 'pointer-events-none scale-95 opacity-70' : ''}`}
+            style={{ backgroundImage: "url('/wax-seal.svg')" }}
+            aria-label="Open the Dream Tome"
+          />
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-10 flex justify-center">
+            <div className="h-1 w-64 rounded-full bg-black/40 blur-sm" aria-hidden />
+          </div>
         </div>
-        <div className="title-emboss">Dream Tome</div>
       </div>
     </div>
   );
