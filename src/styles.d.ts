@@ -6,6 +6,7 @@ declare module '*.webp' {
 }
 
 declare module '*.svg' {
-  const src: string;
-  export default src;
+  import * as React from 'react';
+  const SvgComponent: React.FunctionComponent<React.HTMLAttributes<HTMLSpanElement>>;
+  export default SvgComponent;
 }

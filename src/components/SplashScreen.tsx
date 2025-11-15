@@ -1,91 +1,88 @@
 import { useEffect, useState } from 'react';
+import DreamTomeBook from '../assets/dream-tome-final.svg';
+import candle from '../assets/candle.webp';
+import quill from '../assets/quill.webp';
 import TomePage from '../pages/Tome';
-import dreamTomeBookImg from '../assets/dreamBook.svg';
-import candleImg from '../assets/candle.webp';
-import quillImg from '../assets/quill.webp';
 
-interface SplashScreenProps {
-  onComplete?: () => void;
-}
+type SplashScreenProps = {
+  onStart: () => void;
+};
 
-const KAMUI_DURATION = 1100;
+const EXIT_DELAY = 1200;
 
-export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const [kamui, setKamui] = useState(false);
+export default function SplashScreen({ onStart }: SplashScreenProps) {
+  const [start, setStart] = useState(false);
 
   useEffect(() => {
-    if (!kamui) {
+    if (!start) {
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      onComplete?.();
-    }, KAMUI_DURATION);
+    const handle = window.setTimeout(onStart, EXIT_DELAY);
+    return () => window.clearTimeout(handle);
+  }, [start, onStart]);
 
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [kamui, onComplete]);
-
-  const handleWaxSealClick = () => {
-    if (kamui) {
+  const handleSealClick = () => {
+    if (start) {
       return;
     }
-    setKamui(true);
+
+    setStart(true);
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="relative flex h-screen w-screen items-center justify-center bg-[#1c1109]">
       <div
-        className={`absolute inset-0 transition-opacity duration-700 ${kamui ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        aria-hidden={!kamui}
+        className={`absolute inset-0 z-0 transition-opacity duration-700 ease-out ${
+          start ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        aria-hidden={!start}
       >
         <TomePage />
       </div>
 
       <div
-        className={`absolute inset-0 z-10 flex min-h-screen w-full items-center justify-center bg-deskTexture transition-opacity duration-500 ${kamui ? 'opacity-0 delay-[650ms]' : 'opacity-100'}`}
+        className={`relative z-10 h-full w-full bg-deskTexture overflow-hidden transition-opacity duration-700 ease-out ${
+          start ? 'opacity-0 delay-700' : 'opacity-100'
+        }`}
       >
-        <div className="relative h-full w-full max-w-6xl">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(0,0,0,0.2),_transparent_55%)]" aria-hidden />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" aria-hidden />
 
-          <img
-            src={candleImg}
-            alt="Candle resting on the desk"
-            className="absolute left-10 top-20 w-40 select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)]"
-            draggable={false}
+        <img
+          src={candle}
+          alt="Golden candle casting a soft glow"
+          className="absolute left-10 top-20 w-40 select-none drop-shadow-[0_24px_48px_rgba(0,0,0,0.6)]"
+          draggable={false}
+        />
+
+        <img
+          src={quill}
+          alt="Quill resting beside an inkwell"
+          className="absolute right-16 top-40 w-32 select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)]"
+          draggable={false}
+        />
+
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <DreamTomeBook
+            className={`block w-[480px] transform-gpu drop-shadow-2xl transition-transform duration-700 ease-[cubic-bezier(.22,.61,.36,1)] hover:-rotate-2 hover:scale-[1.02] ${
+              start ? 'kamui-implosion' : ''
+            }`}
+            title="Dream Tome resting on the desk"
+            aria-label="Closed Dream Tome bound in leather"
+            role="img"
           />
-
-          <img
-            src={quillImg}
-            alt="Quill resting on an inkpot"
-            className="absolute right-16 top-40 w-32 select-none drop-shadow-[0_16px_32px_rgba(0,0,0,0.45)]"
-            draggable={false}
-          />
-
-          <div
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform-gpu transition-all duration-[1100ms] ${kamui ? 'kamui-implosion' : ''}`}
-          >
-            <img
-              src={dreamTomeBookImg}
-              alt="Closed Dream Tome"
-              className="w-[480px] drop-shadow-2xl transition-transform duration-700 ease-[cubic-bezier(.22,.61,.36,1)] hover:-rotate-2 hover:scale-[1.02]"
-              draggable={false}
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleWaxSealClick}
-            className={`absolute bottom-20 left-1/2 flex h-32 w-32 -translate-x-1/2 items-center justify-center bg-waxSeal bg-cover transition-transform duration-500 hover:scale-110 focus-visible:scale-110 focus-visible:outline-none ${kamui ? 'pointer-events-none scale-95 opacity-70' : ''}`}
-            style={{ backgroundImage: "url('/wax-seal.svg')" }}
-            aria-label="Open the Dream Tome"
-          />
-
-          <div className="pointer-events-none absolute inset-x-0 bottom-10 flex justify-center">
-            <div className="h-1 w-64 rounded-full bg-black/40 blur-sm" aria-hidden />
-          </div>
         </div>
+
+        <button
+          type="button"
+          onClick={handleSealClick}
+          disabled={start}
+          className="absolute bottom-20 left-1/2 flex h-32 w-32 -translate-x-1/2 items-center justify-center bg-waxSeal bg-cover bg-center transition-transform duration-500 ease-out hover:scale-110 focus-visible:scale-110 focus-visible:outline-none disabled:cursor-default disabled:scale-95 disabled:opacity-75"
+          aria-pressed={start}
+          aria-label="Break the wax seal to open the Dream Tome"
+        >
+          <span className="sr-only">Open the Dream Tome</span>
+        </button>
       </div>
     </div>
   );
