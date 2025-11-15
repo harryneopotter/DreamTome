@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import TomePage from '../pages/Tome';
-import DreamTomeBook from '../assets/dreamBook.svg';
+import dreamTomeBookImg from '../assets/dreamBook.svg';
 import candleImg from '../assets/candle.webp';
 import quillImg from '../assets/quill.webp';
 
@@ -66,7 +66,12 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           <div
             className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform-gpu transition-all duration-[1100ms] ${kamui ? 'kamui-implosion' : ''}`}
           >
-            <DreamTomeBook className="w-[480px] drop-shadow-2xl transition-transform duration-700 ease-[cubic-bezier(.22,.61,.36,1)] hover:-rotate-2 hover:scale-[1.02]" />
+            <img
+              src={dreamTomeBookImg}
+              alt="Closed Dream Tome"
+              className="w-[480px] drop-shadow-2xl transition-transform duration-700 ease-[cubic-bezier(.22,.61,.36,1)] hover:-rotate-2 hover:scale-[1.02]"
+              draggable={false}
+            />
           </div>
 
           <button
