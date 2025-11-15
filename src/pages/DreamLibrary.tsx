@@ -6,13 +6,6 @@ import SearchBar from '../components/SearchBar';
 import FlippableDreamCard from '../components/FlippableDreamCard';
 import ArcaneButton from '../components/ArcaneButton';
 
-const categoryConfig = {
-  Serene: { emoji: '🌸', color: 'bg-blue-100 text-blue-800' },
-  Strange: { emoji: '🔮', color: 'bg-purple-100 text-purple-800' },
-  Nightmare: { emoji: '🌑', color: 'bg-red-100 text-red-800' },
-  Epic: { emoji: '⚔️', color: 'bg-amber-100 text-amber-800' },
-};
-
 export default function DreamLibrary() {
   const { dreams, addTestDreams, clearTestDreams } = useDreams();
   const [selectedDream, setSelectedDream] = useState<Dream | null>(null);
@@ -68,7 +61,7 @@ export default function DreamLibrary() {
           </div>
         ) : (
           <div className="dream-stack">
-            {filteredDreams.map((dream, index) => (
+            {filteredDreams.map((dream) => (
               <div key={dream.id} className="dream-sheet">
                 <FlippableDreamCard
                   dream={dream}
