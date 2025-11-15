@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useDreams } from '../hooks/useDreams';
 import { generateQuote } from '../utils/promptImprover';
 import { calculateStreaks } from '../utils/streakCalculator';
@@ -16,17 +16,23 @@ export default function Reflections() {
   const [showResetToast, setShowResetToast] = useState(false);
   const { play } = useSound();
 
-  const categoryCount = dreams.reduce((acc, dream) => {
-    acc[dream.category] = (acc[dream.category] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const categoryCount = useMemo(() =>
+    dreams.reduce((acc, dream) => {
+      acc[dream.category] = (acc[dream.category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>),
+    [dreams]
+  );
 
-  const tagCount = dreams.reduce((acc, dream) => {
-    dream.tags?.forEach((tag) => {
-      acc[tag] = (acc[tag] || 0) + 1;
-    });
-    return acc;
-  }, {} as Record<string, number>);
+  const tagCount = useMemo(() =>
+    dreams.reduce((acc, dream) => {
+      dream.tags?.forEach((tag) => {
+        acc[tag] = (acc[tag] || 0) + 1;
+      });
+      return acc;
+    }, {} as Record<string, number>),
+    [dreams]
+  );
 
   const lastDream = dreams[dreams.length - 1];
   const quote = lastDream ? generateQuote(lastDream.content) : null;

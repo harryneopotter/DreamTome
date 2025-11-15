@@ -35,13 +35,13 @@ export function calculateStreaks(dateStrings: string[]): StreakData {
   
   // Calculate current streak (working backwards from today)
   const today = new Date();
-  const todayUTC = getUTCDateString(today);
+  const todayUTC = new Date(getUTCDateString(today) + 'T00:00:00Z');
   let currentStreak = 0;
 
   // Check if there's an entry today or yesterday (to keep streak alive)
   const lastEntryDate = sortedDates[sortedDates.length - 1];
   const lastEntry = new Date(lastEntryDate + 'T00:00:00Z');
-  const daysSinceLastEntry = Math.floor((today.getTime() - lastEntry.getTime()) / (1000 * 60 * 60 * 24));
+  const daysSinceLastEntry = Math.floor((todayUTC.getTime() - lastEntry.getTime()) / (1000 * 60 * 60 * 24));
 
   if (daysSinceLastEntry <= 1) {
     // Start counting backwards from the last entry

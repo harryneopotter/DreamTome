@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useDreams } from '../hooks/useDreams';
 import { Dream } from '../types';
 import DreamModal from '../components/DreamModal';
@@ -20,13 +20,16 @@ export default function DreamLibrary() {
 
   const hasTestDreams = dreams.some((dream) => dream.isTest);
 
-  const filteredDreams = dreams.filter((dream) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      dream.title.toLowerCase().includes(query) ||
-      dream.content.toLowerCase().includes(query)
-    );
-  });
+  const filteredDreams = useMemo(() =>
+    dreams.filter((dream) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        dream.title.toLowerCase().includes(query) ||
+        dream.content.toLowerCase().includes(query)
+      );
+    }),
+    [dreams, searchQuery]
+  );
 
   return (
     <div className="min-h-screen px-4 py-8 fade-in">

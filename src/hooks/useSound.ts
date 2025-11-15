@@ -196,6 +196,29 @@ export function useSound() {
   return useMemo(() => ({ play, stop, isReady }), [play, stop, isReady]);
 }
 
+export function cleanupAudioContext() {
+  // Stop all looping sources
+  loopingSources.forEach((handle) => {
+    try {
+      handle.source.stop();
+      handle.source.disconnect();
+      handle.gain.disconnect();
+    } catch (error) {
+      console.warn('[useSound] Error stopping source during cleanup', error);
+    }
+  });
+  loopingSources.clear();
+
+  // Close audio context
+  if (sharedContext) {
+    sharedContext.close();
+    sharedContext = null;
+  }
+
+  // Clear buffer cache
+  bufferCache.clear();
+}
+
 export type { SoundCue };
 
 interface RustleOptions {

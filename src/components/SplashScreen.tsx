@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useSound } from '../hooks/useSound';
 
 interface SplashScreenProps {
@@ -10,7 +9,6 @@ const TRANSITION_DURATION = 850;
 const SWIRL_DELAY = 220;
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const navigate = useNavigate();
   const { play, stop } = useSound();
   const [isOpening, setIsOpening] = useState(false);
   const [isFading, setIsFading] = useState(false);
@@ -60,10 +58,9 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
     exitTimeout.current = window.setTimeout(() => {
       stop('ambientCandle');
-      navigate('/tome');
       onComplete();
     }, TRANSITION_DURATION);
-  }, [isOpening, navigate, onComplete, play, stop]);
+  }, [isOpening, onComplete, play, stop]);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {

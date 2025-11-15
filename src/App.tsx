@@ -5,6 +5,7 @@ import Tome from './pages/Tome';
 import DreamLibrary from './pages/DreamLibrary';
 import Reflections from './pages/Reflections';
 import SplashScreen from './components/SplashScreen';
+import { cleanupAudioContext } from './hooks/useSound';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -12,6 +13,12 @@ function App() {
   useEffect(() => {
     // Always show splash on mount
     setShowSplash(true);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      cleanupAudioContext();
+    };
   }, []);
 
   const handleSplashComplete = () => {

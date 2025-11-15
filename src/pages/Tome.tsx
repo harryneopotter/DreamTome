@@ -15,6 +15,9 @@ const SAMPLE_DREAM = {
   tag: 'Serene' as const,
 };
 
+const MAX_TITLE_LENGTH = 100;
+const MAX_CONTENT_LENGTH = 5000;
+
 type SaveState = 'idle' | 'saving' | 'saved';
 
 export default function Tome() {
@@ -154,11 +157,16 @@ export default function Tome() {
         <input
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => setTitle(e.target.value.slice(0, MAX_TITLE_LENGTH))}
           placeholder="The Floating Garden..."
+          maxLength={MAX_TITLE_LENGTH}
+          aria-label="Dream title"
           className="w-full px-3 py-2 rounded-md border border-[var(--parchment-dark)]/30 bg-white/70 text-[var(--parchment-dark)] focus:outline-none focus:border-[var(--gold)] transition-colors text-sm"
           style={{ fontFamily: 'Spectral, serif' }}
         />
+        <div className="text-xs opacity-50 mt-1" style={{ fontFamily: 'Spectral, serif' }}>
+          {title.length}/{MAX_TITLE_LENGTH} characters
+        </div>
       </div>
 
       <div className="mb-3 flex-1 flex flex-col">
@@ -167,12 +175,17 @@ export default function Tome() {
         </label>
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => setContent(e.target.value.slice(0, MAX_CONTENT_LENGTH))}
           placeholder="I found myself walking through a garden suspended in the clouds..."
+          maxLength={MAX_CONTENT_LENGTH}
+          aria-label="Dream description"
           className="w-full flex-1 px-3 py-2 rounded-md border border-[var(--parchment-dark)]/30 bg-white/70 text-[var(--parchment-dark)] focus:outline-none focus:border-[var(--gold)] transition-colors resize-none text-sm"
           style={{ fontFamily: 'Spectral, serif', minHeight: '120px' }}
           rows={5}
         />
+        <div className="text-xs opacity-50 mt-1" style={{ fontFamily: 'Spectral, serif' }}>
+          {content.length}/{MAX_CONTENT_LENGTH} characters
+        </div>
       </div>
 
       <ArcaneButton
