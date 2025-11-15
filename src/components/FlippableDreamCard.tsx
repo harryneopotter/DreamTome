@@ -1,7 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dream } from '../types';
 import DreamCardArtifacts from './DreamCardArtifacts';
 import { getDreamInsight } from '../utils/dreamInterpreter';
+import ProgressiveText from './ProgressiveText';
+import { useSound } from '../hooks/useSound';
 
 interface FlippableDreamCardProps {
   dream: Dream;
@@ -25,14 +27,18 @@ const tagConfig: Record<string, { emoji: string; color: string }> = {
   Prophetic: { emoji: '🔮', color: '#E7D6A7' },
 };
 
+const insightScrollPositions = new Map<string, number>();
+
 export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [insight, setInsight] = useState(() => getDreamInsight(dream.content));
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const frontFaceRef = useRef<HTMLDivElement | null>(null);
+  const insightScrollRef = useRef<HTMLDivElement | null>(null);
+  const { play } = useSound();
 
   const [cardHeight, setCardHeight] = useState<number | null>(null);
+  const tags = dream.tags ?? [];
 
   useEffect(() => {
     setInsight(getDreamInsight(dream.content));
@@ -71,15 +77,28 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
 
   const flipToInsight = () => {
     setIsFlipped(true);
-    if (audioRef.current) {
-      const a = audioRef.current;
-      a.volume = 0.3;
-      a.currentTime = 0;
-      a.play().catch(() => {});
-    }
+    play('pageTurn');
   };
 
-  const flipBack = () => setIsFlipped(false);
+  const flipBack = () => {
+    setIsFlipped(false);
+    play('flipBack');
+  };
+
+  useEffect(() => {
+    if (isFlipped && insightScrollRef.current) {
+      const saved = insightScrollPositions.get(dream.id) ?? 0;
+      insightScrollRef.current.scrollTop = saved;
+    }
+  }, [dream.id, isFlipped]);
+
+  useEffect(() => () => {
+    insightScrollPositions.delete(dream.id);
+  }, [dream.id]);
+
+  const handleInsightScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
+    insightScrollPositions.set(dream.id, event.currentTarget.scrollTop);
+  };
 
   const config = categoryConfig[dream.category];
 
@@ -116,6 +135,7 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
               position: 'absolute',
               zIndex: 2,
             }}
+            onClick={flipToInsight}
           >
             <DreamCardArtifacts onInterpret={flipToInsight} onExpand={onExpand} />
 
@@ -135,9 +155,9 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
               {dream.content}
             </p>
 
-            {dream.tags?.length > 0 && (
+            {tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
-                {dream.tags.map((tag) => (
+                {tags.map((tag) => (
                   <span
                     key={tag}
                     className="px-2 py-1 rounded-full text-xs font-medium"
@@ -174,7 +194,6 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
               flexDirection: 'column',
             }}
           >
-            {/* Parchment container */}
             <div
               style={{
                 flex: 1,
@@ -183,20 +202,20 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
                 background: 'linear-gradient(180deg, #f7ecd1, #e8d9b8)',
                 borderRadius: '14px',
                 border: '3px solid #d7c287',
-                boxShadow:
-                  '0 10px 26px rgba(0,0,0,0.35), inset 0 0 18px rgba(0,0,0,0.15)',
+                boxShadow: '0 10px 26px rgba(0,0,0,0.35), inset 0 0 18px rgba(0,0,0,0.15)',
                 overflow: 'hidden',
                 position: 'relative',
               }}
             >
               <div
+                ref={insightScrollRef}
+                onScroll={handleInsightScroll}
                 style={{
                   height: '100%',
                   overflowY: 'auto',
                   paddingRight: '10px',
                 }}
               >
-                {/* Emotion */}
                 <h3 style={{ color: '#7a5c40', fontSize: '0.9rem' }}>EMOTION</h3>
                 <p
                   style={{
@@ -210,8 +229,7 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
                   {insight.emotion}
                 </p>
 
-                {/* Symbols */}
-                {insight.symbols?.length > 0 && (
+                {insight.keywords?.length > 0 && (
                   <>
                     <h3 style={{ color: '#7a5c40', fontSize: '0.9rem' }}>SYMBOLS</h3>
                     <div
@@ -222,7 +240,7 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
                         marginBottom: '16px',
                       }}
                     >
-                      {insight.symbols.map((sym) => (
+                      {insight.keywords.map((sym) => (
                         <span
                           key={sym}
                           style={{
@@ -242,21 +260,10 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
                   </>
                 )}
 
-                {/* Interpretation */}
                 <h3 style={{ color: '#7a5c40', fontSize: '0.9rem' }}>INTERPRETATION</h3>
-                <p
-                  style={{
-                    color: '#4b2f1e',
-                    lineHeight: 1.6,
-                    marginTop: '-4px',
-                    whiteSpace: 'pre-wrap',
-                  }}
-                >
-                  {insight.interpretation}
-                </p>
+                <ProgressiveText text={insight.interpretation} isActive={isFlipped} className="mt-1" />
               </div>
 
-              {/* Close button */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -290,13 +297,10 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
           className="fixed inset-0 pointer-events-none"
           style={{
             zIndex: 40,
-            background:
-              'radial-gradient(circle at center, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.45) 100%)',
+            background: 'radial-gradient(circle at center, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.45) 100%)',
           }}
         />
       )}
-
-      <audio ref={audioRef} preload="auto" src="/page-turn.mp3" />
     </>
   );
 }

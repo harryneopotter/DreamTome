@@ -8,6 +8,7 @@ export interface Dream {
   date: string;
   category: 'Serene' | 'Strange' | 'Nightmare' | 'Epic';
   tags?: DreamTag[];
+  isTest?: boolean;
 }
 
 export interface DreamInput {

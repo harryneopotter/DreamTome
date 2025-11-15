@@ -18,15 +18,13 @@ function App() {
     setShowSplash(false);
   };
 
-  if (showSplash) {
-    return <SplashScreen onComplete={handleSplashComplete} />;
-  }
-
   return (
     <Router>
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Tome />} />
+          <Route path="tome" element={<Tome />} />
           <Route path="dreams" element={<DreamLibrary />} />
           <Route path="reflections" element={<Reflections />} />
         </Route>

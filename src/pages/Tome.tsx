@@ -1,120 +1,101 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import ArcaneButton from '../components/ArcaneButton';
+import ProgressiveText from '../components/ProgressiveText';
 import { useDreams } from '../hooks/useDreams';
+import { useSound } from '../hooks/useSound';
 import { improveDreamText } from '../utils/promptImprover';
 
 const BANNER_DISMISSED_KEY = 'dreamtome_sample_banner_dismissed';
 
 const SAMPLE_DREAM = {
   title: 'The Staircase That Never Ended',
-  description: `I was climbing a spiral staircase made of clouds, each step humming softly like a heartbeat. The higher I went, the more I forgot why I was climbing. The moon was above me, but it kept drifting farther away. When I finally looked down, there was no beginning anymore—just endless mist and the faint echo of laughter I couldn't place.`,
+  description:
+    'I was climbing a spiral staircase made of clouds, each step humming softly like a heartbeat. The higher I went, the more I forgot why I was climbing. The moon was above me, but it kept drifting farther away. When I finally looked down, there was no beginning anymore—just endless mist and the faint echo of laughter I could not place.',
   tag: 'Serene' as const,
 };
+
+type SaveState = 'idle' | 'saving' | 'saved';
 
 export default function Tome() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [refinedContent, setRefinedContent] = useState('');
   const [isRefining, setIsRefining] = useState(false);
+  const [saveState, setSaveState] = useState<SaveState>('idle');
   const [showBanner, setShowBanner] = useState(false);
+  const [leftPageTarget, setLeftPageTarget] = useState<Element | null>(null);
   const { addDream, dreams } = useDreams();
+  const { play } = useSound();
+  const timeoutsRef = useRef<number[]>([]);
 
-  // Check if banner should be shown
+  const scheduleTimeout = useCallback((callback: () => void, delay: number) => {
+    const timeoutId = window.setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((storedId) => storedId !== timeoutId);
+      callback();
+    }, delay);
+    timeoutsRef.current.push(timeoutId);
+    return timeoutId;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((timeoutId) => {
+        window.clearTimeout(timeoutId);
+      });
+      timeoutsRef.current = [];
+    };
+  }, []);
+
   useEffect(() => {
     const dismissed = localStorage.getItem(BANNER_DISMISSED_KEY);
     const shouldShow = dreams.length === 0 && !dismissed;
     setShowBanner(shouldShow);
   }, [dreams.length]);
 
+  useEffect(() => {
+    setLeftPageTarget(document.getElementById('refined-prose-page'));
+  }, []);
+
+  const canInscribe = useMemo(
+    () => Boolean(title.trim()) && Boolean(refinedContent.trim()) && saveState !== 'saving',
+    [title, refinedContent, saveState]
+  );
+
   const handleRefine = () => {
     if (!content.trim()) return;
-    
+
     setIsRefining(true);
-    setTimeout(() => {
+    setSaveState('idle');
+    setRefinedContent('');
+
+    scheduleTimeout(() => {
       const refined = improveDreamText(content);
       setRefinedContent(refined);
-      
-      // Display refined prose on left page
-      const leftPage = document.getElementById('refined-prose-page');
-      if (leftPage) {
-        leftPage.innerHTML = `
-          <div class="refined-prose visible">${refined}</div>
-          <button class="inscribe-button" id="inscribe-btn">
-            💾 Inscribe into Tome
-          </button>
-        `;
-        
-        // Attach event listener to the button
-        const inscribeBtn = document.getElementById('inscribe-btn');
-        if (inscribeBtn) {
-          inscribeBtn.addEventListener('click', handleSave);
-        }
-      }
-      
       setIsRefining(false);
+      play('pageTurn');
     }, 1200);
   };
 
   const handleSave = () => {
-    if (!title.trim() || !refinedContent.trim()) return;
-    
-    const inscribeBtn = document.getElementById('inscribe-btn') as HTMLButtonElement;
-    if (!inscribeBtn) return;
+    if (!canInscribe) return;
 
-    // Disable button and show loading state
-    inscribeBtn.disabled = true;
-    inscribeBtn.style.opacity = '0.75';
-    inscribeBtn.style.cursor = 'not-allowed';
-    inscribeBtn.innerHTML = `
-      <span style="display: inline-block; width: 16px; height: 16px; border: 2px solid var(--parchment-dark); border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px;"></span>
-      Inscribing...
-    `;
-
-    // Add spin animation if it doesn't exist
-    if (!document.getElementById('spin-animation')) {
-      const style = document.createElement('style');
-      style.id = 'spin-animation';
-      style.textContent = `
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    // Simulate save delay
-    setTimeout(() => {
+    setSaveState('saving');
+    scheduleTimeout(() => {
       addDream({
         title: title.trim(),
         content: refinedContent,
         originalContent: content,
       });
-
-      // Show success state
-      inscribeBtn.innerHTML = `
-        <span style="font-size: 20px; margin-right: 8px;">✓</span>
-        Inscribed!
-      `;
-      inscribeBtn.style.backgroundColor = '#10b981';
-      inscribeBtn.style.opacity = '1';
-
-      // Reset form after brief delay
-      setTimeout(() => {
+      setSaveState('saved');
+      scheduleTimeout(() => {
         setTitle('');
         setContent('');
         setRefinedContent('');
-        
-        // Clear left page
-        const leftPage = document.getElementById('refined-prose-page');
-        if (leftPage) {
-          leftPage.innerHTML = '';
-        }
-        
-        // Hide banner after first dream is saved
+        setSaveState('idle');
         setShowBanner(false);
-        
-        alert('✨ Dream inscribed into your Tome!');
-      }, 800);
-    }, 600);
+      }, 600);
+    }, 500);
   };
 
   const handleLoadSample = () => {
@@ -122,28 +103,11 @@ export default function Tome() {
     setContent(SAMPLE_DREAM.description);
     setRefinedContent('');
     setShowBanner(false);
-    
-    // Small delay then trigger refine
-    setTimeout(() => {
+
+    scheduleTimeout(() => {
       const refined = improveDreamText(SAMPLE_DREAM.description);
       setRefinedContent(refined);
-      
-      // Display on left page
-      const leftPage = document.getElementById('refined-prose-page');
-      if (leftPage) {
-        leftPage.innerHTML = `
-          <div class="refined-prose visible">${refined}</div>
-          <button class="inscribe-button" id="inscribe-btn">
-            💾 Inscribe into Tome
-          </button>
-        `;
-        
-        // Attach event listener
-        const inscribeBtn = document.getElementById('inscribe-btn');
-        if (inscribeBtn) {
-          inscribeBtn.addEventListener('click', handleSave);
-        }
-      }
+      play('pageTurn');
     }, 500);
   };
 
@@ -154,37 +118,31 @@ export default function Tome() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Onboarding Banner */}
       {showBanner && (
         <div className="mb-4 p-3 rounded-lg border-2 border-[var(--gold)] bg-gradient-to-br from-amber-50 to-yellow-50 fade-in">
           <div className="flex items-start gap-2">
             <div className="text-xl">✨</div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-[var(--burgundy)] mb-1">
+              <h3 className="text-sm font-semibold text-[var(--burgundy)] mb-1" style={{ fontFamily: "'Cormorant Unicase', serif" }}>
                 New here? Try a sample.
               </h3>
               <div className="flex flex-wrap gap-2 mt-2">
-                <button
-                  onClick={handleLoadSample}
-                  className="px-3 py-1.5 bg-[var(--gold)] text-[var(--parchment-dark)] rounded text-xs font-medium hover:bg-[#c9a332] transition-all"
-                  style={{ fontFamily: "'Marcellus SC', serif" }}
-                >
+                <ArcaneButton onClick={handleLoadSample} className="!px-4 !py-2 !text-xs">
                   Load Sample
-                </button>
-                <button
+                </ArcaneButton>
+                <ArcaneButton
+                  variant="ghost"
                   onClick={handleDismissBanner}
-                  className="px-3 py-1.5 bg-[var(--parchment-dark)]/10 text-[var(--parchment-dark)] rounded text-xs font-medium hover:bg-[var(--parchment-dark)]/20 transition-all"
-                  style={{ fontFamily: "'Marcellus SC', serif" }}
+                  className="!px-4 !py-2 !text-xs"
                 >
                   Dismiss
-                </button>
+                </ArcaneButton>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Dream Form */}
       <h2 className="text-2xl font-semibold mb-3 text-[var(--burgundy)]" style={{ fontFamily: "'Cormorant Unicase', serif" }}>
         Chronicle a Dream
       </h2>
@@ -217,26 +175,68 @@ export default function Tome() {
         />
       </div>
 
-      <button
+      <ArcaneButton
         onClick={handleRefine}
         disabled={!content.trim() || isRefining}
-        className="w-full bg-[#7b3f00] text-[#fff3e0] py-2.5 rounded-md font-medium hover:bg-[#a05a1b] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm mb-3"
-        style={{ fontFamily: "'Marcellus SC', serif" }}
+        className="w-full justify-center mb-3"
       >
         {isRefining ? (
           <>
-            <span className="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span className="inline-block w-3 h-3 border-2 border-[var(--parchment-dark)] border-t-transparent rounded-full animate-spin"></span>
             Refining with Magic...
           </>
         ) : (
           '✨ Refine with Magic'
         )}
-      </button>
+      </ArcaneButton>
 
-      {/* Footer Note */}
       <p className="text-center text-xs opacity-50 mt-auto pt-3" style={{ fontFamily: 'Spectral, serif' }}>
         🔒 Stored locally — safe within your Tome
       </p>
+
+      {leftPageTarget &&
+        createPortal(
+          <LeftPagePanel
+            content={refinedContent}
+            saveState={saveState}
+            canInscribe={canInscribe}
+            onInscribe={handleSave}
+          />,
+          leftPageTarget
+        )}
+    </div>
+  );
+}
+
+interface LeftPagePanelProps {
+  content: string;
+  saveState: SaveState;
+  canInscribe: boolean;
+  onInscribe: () => void;
+}
+
+function LeftPagePanel({ content, saveState, canInscribe, onInscribe }: LeftPagePanelProps) {
+  const hasContent = Boolean(content.trim());
+
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center text-center">
+      {hasContent ? (
+        <div className="refined-prose visible w-full">
+          <ProgressiveText text={content} isActive={hasContent} />
+        </div>
+      ) : (
+        <p className="text-sm italic text-[var(--ink-brown)]/70" style={{ fontFamily: 'Spectral, serif' }}>
+          Your refined prose will glow into existence here.
+        </p>
+      )}
+
+      <ArcaneButton
+        onClick={onInscribe}
+        disabled={!canInscribe}
+        className="mt-6"
+      >
+        {saveState === 'saving' ? 'Inscribing...' : saveState === 'saved' ? 'Inscribed!' : '💾 Inscribe into Tome'}
+      </ArcaneButton>
     </div>
   );
 }

@@ -2,12 +2,19 @@ import { useState } from 'react';
 import { useDreams } from '../hooks/useDreams';
 import { generateQuote } from '../utils/promptImprover';
 import { calculateStreaks } from '../utils/streakCalculator';
+import ArcaneButton from '../components/ArcaneButton';
+import ConfirmDialog from '../components/ConfirmDialog';
+import Toast from '../components/Toast';
+import { useSound } from '../hooks/useSound';
 
 export default function Reflections() {
   const { dreams, clearAllDreams, getDreamDays } = useDreams();
   const [flippedTiles, setFlippedTiles] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showQuoteInterpretation, setShowQuoteInterpretation] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showResetToast, setShowResetToast] = useState(false);
+  const { play } = useSound();
 
   const categoryCount = dreams.reduce((acc, dream) => {
     acc[dream.category] = (acc[dream.category] || 0) + 1;
@@ -29,10 +36,22 @@ export default function Reflections() {
   const streakData = calculateStreaks(dreamDays);
 
   const handleReset = () => {
-    if (confirm('Are you sure you want to clear all dreams? This cannot be undone.')) {
-      clearAllDreams();
-      alert('✨ Your Tome has been reset.');
-    }
+    setShowResetDialog(true);
+    play('hoverGlow');
+  };
+
+  const confirmReset = () => {
+    clearAllDreams();
+    setFlippedTiles(new Set());
+    setSelectedCategory(null);
+    setShowResetDialog(false);
+    setShowResetToast(true);
+    play('sealPop');
+  };
+
+  const cancelReset = () => {
+    setShowResetDialog(false);
+    play('flipBack');
   };
 
   const toggleTile = (tileId: string) => {
@@ -230,16 +249,26 @@ export default function Reflections() {
         {/* Reset Button */}
         {dreams.length > 0 && (
           <div className="text-center mt-12">
-            <button
-              onClick={handleReset}
-              className="px-6 py-3 bg-[var(--burgundy)] text-white rounded-lg font-medium hover:bg-[#6d3039] transition-all"
-              style={{ fontFamily: "'Marcellus SC', serif" }}
-            >
+            <ArcaneButton variant="secondary" onClick={handleReset} className="justify-center">
               🗑️ Reset Tome
-            </button>
+            </ArcaneButton>
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showResetDialog}
+        title="Clear the Dream Archive?"
+        description="This will remove every inscribed dream and reset your streak records. The action cannot be undone."
+        confirmLabel="Yes, clear the Tome"
+        cancelLabel="Keep my dreams"
+        onConfirm={confirmReset}
+        onCancel={cancelReset}
+      />
+
+      {showResetToast && (
+        <Toast message="Your Tome has been reset." onClose={() => setShowResetToast(false)} />
+      )}
 
       {/* Category Parchment Overlay */}
       {selectedCategory && (
