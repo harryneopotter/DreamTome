@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110">
   <defs>
-    <linearGradient id="candle-wax" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="wax" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#f4e6cc"/>
       <stop offset="1" stop-color="#e6d3ae"/>
     </linearGradient>
-    <linearGradient id="candle-brass" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#c9a15f"/>
       <stop offset="1" stop-color="#8b6a36"/>
     </linearGradient>
-    <radialGradient id="candle-flameCore" cx="50%" cy="35%" r="50%">
+    <radialGradient id="flameCore" cx="50%" cy="35%" r="50%">
       <stop offset="0" stop-color="#fff7c2"/>
       <stop offset=".5" stop-color="#ffd266"/>
       <stop offset="1" stop-color="#ff7e3f"/>
     </radialGradient>
-    <radialGradient id="candle-glow" cx="50%" cy="40%" r="60%">
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%">
       <stop offset="0" stop-color="#ffefb0" stop-opacity=".9"/>
       <stop offset="1" stop-color="#ffefb0" stop-opacity="0"/>
     </radialGradient>
@@ -29,15 +29,15 @@
 
   <ellipse cx="55" cy="94" rx="25" ry="8" fill="#000" opacity=".25"/>
   <g>
-    <ellipse cx="55" cy="86" rx="26" ry="8" fill="url(#candle-brass)"/>
-    <rect x="49" y="64" width="12" height="18" rx="3" fill="url(#candle-brass)"/>
+    <ellipse cx="55" cy="86" rx="26" ry="8" fill="url(#brass)"/>
+    <rect x="49" y="64" width="12" height="18" rx="3" fill="url(#brass)"/>
   </g>
 
-  <rect x="48" y="38" width="14" height="30" rx="4" fill="url(#candle-wax)"/>
+  <rect x="48" y="38" width="14" height="30" rx="4" fill="url(#wax)"/>
   <ellipse cx="55" cy="38" rx="7" ry="2.8" fill="#d8c09a"/>
 
   <g class="flame">
-    <circle cx="55" cy="38" r="20" fill="url(#candle-glow)"/>
-    <path d="M55 22c3 3 6 7 6 10 0 3-2 6-6 6s-6-3-6-6c0-3 3-7 6-10z" fill="url(#candle-flameCore)"/>
+    <circle cx="55" cy="38" r="20" fill="url(#glow)"/>
+    <path d="M55 22c3 3 6 7 6 10 0 3-2 6-6 6s-6-3-6-6c0-3 3-7 6-10z" fill="url(#flameCore)"/>
   </g>
 </svg>
