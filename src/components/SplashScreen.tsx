@@ -1,8 +1,4 @@
 import { useState } from "react";
-import bookSvg from "../assets/dream-tome-final.svg?url";
-import candleSvg from "../assets/candle.svg?url";
-import quillSvg from "../assets/quill.svg?url";
-import sealSvg from "../assets/seal.svg?url";
 
 export default function SplashScreen({ onEnter }: { onEnter: () => void }) {
   const [kamui, setKamui] = useState(false);
@@ -18,14 +14,14 @@ export default function SplashScreen({ onEnter }: { onEnter: () => void }) {
 
       {/* Candle */}
       <img
-        src={candleSvg}
+        src="/candle.svg"
         alt=""
         className="absolute left-8 top-12 w-24 pointer-events-none select-none"
       />
 
       {/* Quill */}
       <img
-        src={quillSvg}
+        src="/quill-ink.svg"
         alt=""
         className="absolute right-10 top-20 w-24 pointer-events-none select-none"
       />
@@ -38,7 +34,7 @@ export default function SplashScreen({ onEnter }: { onEnter: () => void }) {
         `}
       >
         <img
-          src={bookSvg}
+          src="/dream-tome-book.svg"
           alt=""
           className="w-[380px] drop-shadow-[0_18px_30px_rgba(0,0,0,0.6)]"
         />
@@ -51,7 +47,7 @@ export default function SplashScreen({ onEnter }: { onEnter: () => void }) {
         w-24 h-24 bg-center bg-cover rounded-full
         shadow-[0_8px_18px_rgba(0,0,0,0.6)]
         hover:scale-110 active:scale-95 transition-transform duration-200"
-        style={{ backgroundImage: `url(${sealSvg})` }}
+        style={{ backgroundImage: `url(/wax-seal.svg)` }}
         aria-label="Enter Dream Tome"
       />
     </div>
