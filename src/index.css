@@ -405,7 +405,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 2px solid #d1b48b;
   border-radius: 8px;
   padding: 2rem;
-  margin-top: -220px; /* Tighter stack */
+  margin-top: -235px; /* More compact stack */
   margin-left: 0;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   transform: rotate(var(--rotation, 0deg)) translateX(var(--offset-x, 0));
@@ -585,7 +585,11 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) scale(2.8);
+  width: 200px;
+  height: 120px;
+  margin-left: -100px;
+  margin-top: -60px;
+  transform: scale(2.5);
   z-index: 1000;
   cursor: default;
 }
@@ -642,13 +646,13 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   line-height: 1.6;
   background: linear-gradient(135deg, #f9e6c8 0%, #e8d4b0 100%);
-  transition: font-size 0.3s ease, padding 0.3s ease;
+  transition: font-size 0.3s ease, padding 0.3s ease, line-height 0.3s ease;
 }
 
 .reflection-tile.expanded .back {
-  font-size: 2rem;
-  padding: 2.5rem;
-  line-height: 1.7;
+  font-size: 1.5rem;
+  padding: 1.8rem;
+  line-height: 1.4;
 }
 
 .reflection-tile .front .value {
@@ -828,10 +832,10 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.1rem;
   }
   .dream-sheet {
-    margin-top: -200px;
+    margin-top: -215px;
   }
   .dream-sheet:hover {
-    margin-top: -180px;
+    margin-top: -195px;
   }
   
   .reflection-tile {
@@ -918,13 +922,13 @@ h1, h2, h3, h4, h5, h6 {
   
   .dream-sheet {
     padding: 1.5rem;
-    margin-top: -190px;
+    margin-top: -210px;
     min-height: 220px;
     max-height: 220px;
   }
 
   .dream-sheet:hover {
-    margin-top: -170px;
+    margin-top: -190px;
   }
   
   .reflection-tile {
