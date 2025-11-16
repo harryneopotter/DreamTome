@@ -8,12 +8,7 @@ import SplashScreen from './components/SplashScreen';
 import { cleanupAudioContext } from './hooks/useSound';
 
 function App() {
-  const [showSplash, setShowSplash] = useState(true);
-
-  useEffect(() => {
-    // Always show splash on mount
-    setShowSplash(true);
-  }, []);
+  const [entered, setEntered] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -21,13 +16,12 @@ function App() {
     };
   }, []);
 
-  const handleSplashComplete = () => {
-    setShowSplash(false);
-  };
+  if (!entered) {
+    return <SplashScreen onEnter={() => setEntered(true)} />;
+  }
 
   return (
     <Router>
-      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Tome />} />
