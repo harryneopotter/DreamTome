@@ -4,8 +4,11 @@ import { X, Edit, Trash } from './Icons';
 import { useDreams } from '../hooks/useDreams';
 import ExportCard from './ExportCard';
 import Toast from './Toast';
+import ConfirmDialog from './ConfirmDialog';
 import { exportDreamAsPNG } from '../utils/exportDream';
 import ArcaneButton from './ArcaneButton';
+import { useSound } from '../hooks/useSound';
+import { Z_INDEX } from '../constants/zIndex';
 
 interface DreamModalProps {
   dream: Dream;
@@ -23,8 +26,11 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(dream.content);
   const [isExporting, setIsExporting] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { updateDream, deleteDream } = useDreams();
+  const { play } = useSound();
 
   const handleSave = () => {
     updateDream(dream.id, { content: editedContent });
@@ -32,19 +38,29 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
   };
 
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this dream?')) {
-      deleteDream(dream.id);
-      onClose();
-    }
+    setShowDeleteDialog(true);
+    play('hoverGlow');
+  };
+
+  const confirmDelete = () => {
+    deleteDream(dream.id);
+    setShowDeleteDialog(false);
+    play('sealPop');
+    onClose();
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteDialog(false);
+    play('flipBack');
   };
 
   const handleExport = async () => {
     setIsExporting(true);
     try {
       await exportDreamAsPNG(dream.title);
-      setShowToast(true);
+      setShowSuccessToast(true);
     } catch (error) {
-      alert('Failed to export dream. Please try again.');
+      setShowErrorToast(true);
       console.error('Export error:', error);
     } finally {
       setIsExporting(false);
@@ -57,7 +73,7 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
     <>
       <div
         className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 fade-in"
-        style={{ zIndex: 1000000 }}
+        style={{ zIndex: Z_INDEX.MODAL }}
         onClick={onClose}
       >
         <div
@@ -169,11 +185,30 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
       {/* Hidden export card - stays completely off-screen */}
       <ExportCard dream={dream} />
 
+      {/* Delete confirmation dialog */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Delete Dream?"
+        description="This dream will be permanently removed from your Tome. This action cannot be undone."
+        confirmLabel="Yes, delete it"
+        cancelLabel="Keep it"
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
+
       {/* Success toast */}
-      {showToast && (
+      {showSuccessToast && (
         <Toast
           message="Dream exported as PNG!"
-          onClose={() => setShowToast(false)}
+          onClose={() => setShowSuccessToast(false)}
+        />
+      )}
+
+      {/* Error toast */}
+      {showErrorToast && (
+        <Toast
+          message="Failed to export dream. Please try again."
+          onClose={() => setShowErrorToast(false)}
         />
       )}
     </>

@@ -159,6 +159,8 @@ function isDreamArray(value: unknown): value is Dream[] {
     return false;
   }
 
+  const validCategories = ['Serene', 'Strange', 'Nightmare', 'Epic'];
+
   return value.every((item) => {
     if (!item || typeof item !== 'object') {
       return false;
@@ -169,7 +171,9 @@ function isDreamArray(value: unknown): value is Dream[] {
       typeof candidate.id === 'string' &&
       typeof candidate.title === 'string' &&
       typeof candidate.content === 'string' &&
-      typeof candidate.date === 'string'
+      typeof candidate.date === 'string' &&
+      typeof candidate.category === 'string' &&
+      validCategories.includes(candidate.category)
     );
   });
 }

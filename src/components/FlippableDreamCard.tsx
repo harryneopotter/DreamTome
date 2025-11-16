@@ -4,6 +4,7 @@ import DreamCardArtifacts from './DreamCardArtifacts';
 import { getDreamInsight } from '../utils/dreamInterpreter';
 import ProgressiveText from './ProgressiveText';
 import { useSound } from '../hooks/useSound';
+import { Z_INDEX } from '../constants/zIndex';
 
 interface FlippableDreamCardProps {
   dream: Dream;
@@ -110,7 +111,7 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
         style={{
           perspective: '1500px',
           transformStyle: 'preserve-3d',
-          zIndex: 50000,
+          zIndex: Z_INDEX.CARD_FLIPPED,
         }}
       >
         <div

@@ -5,10 +5,9 @@ import DreamModal from './DreamModal';
 
 interface DreamCardProps {
   dream: Dream;
-  onClick: () => void;
 }
 
-export default function DreamCard({ dream, onClick }: DreamCardProps) {
+export default function DreamCard({ dream }: DreamCardProps) {
   const [showModal, setShowModal] = useState(false);
 
   const handleExpand = () => {

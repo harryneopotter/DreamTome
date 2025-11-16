@@ -27,31 +27,39 @@ export async function exportDreamAsPNG(dreamTitle: string): Promise<void> {
     // Use html2canvas to render the card
     const canvas = await html2canvas(element, {
       backgroundColor: null,
-      scale: 2, // Higher quality
+      scale: 2,
       logging: false,
       useCORS: true,
     });
 
-    // Convert to blob
-    canvas.toBlob((blob) => {
-      if (!blob) {
-        throw new Error('Failed to create image blob');
-      }
+    // Convert to blob and download - wrapped in Promise
+    await new Promise<void>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('Failed to create image blob'));
+          return;
+        }
 
-      // Create download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `dreamtome-${slugify(dreamTitle)}.png`;
-      
-      // Trigger download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Cleanup
-      URL.revokeObjectURL(url);
-    }, 'image/png');
+        try {
+          // Create download link
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `dreamtome-${slugify(dreamTitle)}.png`;
+
+          // Trigger download
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          // Cleanup
+          URL.revokeObjectURL(url);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      }, 'image/png');
+    });
   } catch (error) {
     console.error('Error exporting dream:', error);
     throw error;
