@@ -70,7 +70,7 @@
       </feComponentTransfer>
     </filter>
     
-    <filter id="glow">
+    <filter id="book-glow">
       <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
       <feMerge>
         <feMergeNode in="coloredBlur"/>
@@ -235,7 +235,7 @@
   </g>
   
   <!-- Title glow layer with perspective -->
-  <ellipse cx="403" cy="520" rx="190" ry="70" fill="url(#magicalGlow)" opacity="0.4" filter="url(#glow)" transform="rotate(6 403 520)"/>
+  <ellipse cx="403" cy="520" rx="190" ry="70" fill="url(#magicalGlow)" opacity="0.4" filter="url(#book-glow)" transform="rotate(6 403 520)"/>
   
   <!-- Fleur-de-lis dividers with perspective -->
   <g fill="url(#goldGradient)" filter="url(#emboss)" transform="rotate(6 398 545)">
@@ -301,7 +301,7 @@
   
   <!-- Final outer glow for magical effect with 3D perspective -->
   <path d="M170,310 L596,377 L630,795 L190,748 Z" fill="none" 
-        stroke="#ffd700" stroke-width="1" opacity="0.3" filter="url(#glow)"/>
+        stroke="#ffd700" stroke-width="1" opacity="0.3" filter="url(#book-glow)"/>
   
   <!-- Subtle page glow from bottom -->
   <path d="M190,748 L170,758 L610,805 L630,795 Z" fill="none" 
