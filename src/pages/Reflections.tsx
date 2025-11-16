@@ -9,7 +9,7 @@ import { useSound } from '../hooks/useSound';
 
 export default function Reflections() {
   const { dreams, clearAllDreams, getDreamDays } = useDreams();
-  const [flippedTiles, setFlippedTiles] = useState<Set<string>>(new Set());
+  const [expandedTile, setExpandedTile] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showQuoteInterpretation, setShowQuoteInterpretation] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
@@ -48,7 +48,7 @@ export default function Reflections() {
 
   const confirmReset = () => {
     clearAllDreams();
-    setFlippedTiles(new Set());
+    setExpandedTile(null);
     setSelectedCategory(null);
     setShowResetDialog(false);
     setShowResetToast(true);
@@ -60,16 +60,14 @@ export default function Reflections() {
     play('flipBack');
   };
 
-  const toggleTile = (tileId: string) => {
-    setFlippedTiles(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(tileId)) {
-        newSet.delete(tileId);
-      } else {
-        newSet.add(tileId);
-      }
-      return newSet;
-    });
+  const expandTile = (tileId: string) => {
+    setExpandedTile(tileId);
+    play('pageTurn');
+  };
+
+  const collapseTile = () => {
+    setExpandedTile(null);
+    play('flipBack');
   };
 
   const openCategoryPanel = (category: string) => {
@@ -107,8 +105,8 @@ export default function Reflections() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 justify-items-center">
           {/* Current Streak Tile */}
           <div
-            className={`reflection-tile ${flippedTiles.has('current') ? 'flipped' : ''}`}
-            onClick={() => toggleTile('current')}
+            className={`reflection-tile ${expandedTile === 'current' ? 'expanded' : ''}`}
+            onClick={() => expandTile('current')}
           >
             <div className="reflection-tile-inner">
               <div className="front">
@@ -127,8 +125,8 @@ export default function Reflections() {
 
           {/* Longest Streak Tile */}
           <div
-            className={`reflection-tile ${flippedTiles.has('longest') ? 'flipped' : ''}`}
-            onClick={() => toggleTile('longest')}
+            className={`reflection-tile ${expandedTile === 'longest' ? 'expanded' : ''}`}
+            onClick={() => expandTile('longest')}
           >
             <div className="reflection-tile-inner">
               <div className="front">
@@ -147,8 +145,8 @@ export default function Reflections() {
 
           {/* Total Days Tile */}
           <div
-            className={`reflection-tile ${flippedTiles.has('total') ? 'flipped' : ''}`}
-            onClick={() => toggleTile('total')}
+            className={`reflection-tile ${expandedTile === 'total' ? 'expanded' : ''}`}
+            onClick={() => expandTile('total')}
           >
             <div className="reflection-tile-inner">
               <div className="front">
@@ -316,6 +314,15 @@ export default function Reflections() {
             </p>
           </div>
         </div>
+      )}
+
+      {/* Expanded Tile Backdrop */}
+      {expandedTile && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[900]"
+          onClick={collapseTile}
+          style={{ animation: 'fadeIn 0.3s ease' }}
+        />
       )}
     </div>
   );

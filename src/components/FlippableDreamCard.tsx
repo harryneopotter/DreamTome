@@ -193,11 +193,14 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
               position: 'absolute',
               display: 'flex',
               flexDirection: 'column',
+              zIndex: 1,
             }}
           >
             <div
               style={{
                 flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
                 margin: '10px',
                 padding: '18px 20px',
                 background: 'linear-gradient(180deg, #f7ecd1, #e8d9b8)',
@@ -212,7 +215,7 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
                 ref={insightScrollRef}
                 onScroll={handleInsightScroll}
                 style={{
-                  height: '100%',
+                  flex: 1,
                   overflowY: 'auto',
                   paddingRight: '10px',
                 }}
