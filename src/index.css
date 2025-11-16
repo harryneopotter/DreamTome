@@ -578,6 +578,16 @@ h1, h2, h3, h4, h5, h6 {
   perspective: 800px;
   cursor: pointer;
   position: relative;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.reflection-tile.expanded {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(2.8);
+  z-index: 1000;
+  cursor: default;
 }
 
 .reflection-tile-inner {
@@ -588,7 +598,7 @@ h1, h2, h3, h4, h5, h6 {
   transform-style: preserve-3d;
 }
 
-.reflection-tile.flipped .reflection-tile-inner {
+.reflection-tile.expanded .reflection-tile-inner {
   transform: rotateY(180deg);
 }
 
@@ -632,6 +642,13 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   line-height: 1.6;
   background: linear-gradient(135deg, #f9e6c8 0%, #e8d4b0 100%);
+  transition: font-size 0.3s ease, padding 0.3s ease;
+}
+
+.reflection-tile.expanded .back {
+  font-size: 2rem;
+  padding: 2.5rem;
+  line-height: 1.7;
 }
 
 .reflection-tile .front .value {
