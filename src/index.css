@@ -585,7 +585,7 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) scale(2.8);
+  transform: translate(-50%, -50%) scale(2.5);
   z-index: 1000;
   cursor: default;
 }
@@ -642,13 +642,13 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   line-height: 1.6;
   background: linear-gradient(135deg, #f9e6c8 0%, #e8d4b0 100%);
-  transition: font-size 0.3s ease, padding 0.3s ease;
+  transition: font-size 0.3s ease, padding 0.3s ease, line-height 0.3s ease;
 }
 
 .reflection-tile.expanded .back {
-  font-size: 2rem;
+  font-size: 1rem;
   padding: 2.5rem;
-  line-height: 1.7;
+  line-height: 0.85;
 }
 
 .reflection-tile .front .value {

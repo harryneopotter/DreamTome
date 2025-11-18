@@ -101,11 +101,7 @@
       <circle cx="85" cy="80" r="1" fill="#dcc8a0" opacity="0.4"/>
     </pattern>
   </defs>
-  
-  <!-- Parchment background with vignette -->
-  <rect width="800" height="1000" fill="url(#parchmentTexture)"/>
-  <rect width="800" height="1000" fill="radial-gradient(circle at center, transparent 30%, rgba(101, 67, 33, 0.2) 100%)"/>
-  
+
   <!-- Define the book geometry with proper constraints -->
   <!-- Spine corners: 1(150,300), 2(170,310), 3(190,748), 4(170,758) -->
   <!-- Front cover corners: 5(190,300), 8(630,355), 11(643,793), 12(190,300) where 12=1 -->
