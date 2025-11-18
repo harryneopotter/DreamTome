@@ -134,7 +134,6 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
               borderRadius: '12px',
               boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
               position: 'absolute',
-              zIndex: 2,
             }}
             onClick={flipToInsight}
           >
@@ -193,7 +192,6 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
               position: 'absolute',
               display: 'flex',
               flexDirection: 'column',
-              zIndex: 1,
             }}
           >
             <div
