@@ -1,18 +1,82 @@
-# DreamTome  
-A storybook-styled dream journaling app built with React + TypeScript + Tailwind + custom parchment CSS. DreamTome presents dreams as physical objects: floating parchment cards, a candle-lit desk, and a flippable insight panel.
+## Summary
+The repository contains two README files: `README-o.md` (public-facing, visually appealing, feature-focused) and `README.md` (developer-focused, technical, and structural).
 
-## Project Overview
-DreamTome is not a standard CRUD app. It's a handcrafted, animated, immersive UI where every element behaves like an artifact in a magical study room.
+To best represent the project, merge the best parts of both files:
 
-### Core Characteristics
-- Skeuomorphic UI: parchment, candles, wax seals, desk artifacts  
-- Dream cards appear as layered scrolls in a dream library  
-- Each card flips in 3D to reveal an AI-generated interpretation panel  
-- Page-turn sound for flips  
-- Offline local storage model  
-- No external UI frameworks beyond Tailwind + custom CSS
+### Proposed Structure for the Merged README.md:
 
-## Project Structure
+1. **Project Logo and Badges** (from README-o.md)
+2. **Intro and Screenshots** (from README-o.md)
+3. **Feature List** (from README-o.md)
+4. **Technical Overview** (from README.md)
+5. **Tech Stack** (from README-o.md)
+6. **Project Structure & Key Components** (from README.md)
+7. **Getting Started/Installation** (from README-o.md, slightly tailored for pnpm and npm)
+8. **Roadmap & Testing** (from README.md)
+9. **License** (from README-o.md)
+  
+### Rationale
+- README-o.md is better for onboarding and selling the application to users.
+- README.md contains valuable technical/structural notes for contributors.
+- Merging offers the best experience for both new users and potential contributors.
+
+### Drafted Example for the New README.md:
+
+---
+
+# ✨ DreamTome ✨
+
+<p align="center">
+  <img src="public/quill-ink.svg" alt="DreamTome Logo" width="150"/>
+</p>
+
+<h3 align="center">Your personal sanctuary for chronicling, exploring, and understanding your dreams.</h3>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-blue?logo=react" alt="React Badge"/>
+  <img src="https://img.shields.io/badge/Vite-6-purple?logo=vite" alt="Vite Badge"/>
+  <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript" alt="TypeScript Badge"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?logo=tailwind-css" alt="Tailwind CSS Badge"/>
+</p>
+
+---
+
+DreamTome is a beautifully crafted dream journaling application designed to be your private, offline-first companion for exploring the world of your subconscious. Featuring a unique, storybook-inspired, book-like interface. Every element is crafted to evoke a magical study room experience: wax seals, parchment panels, and flippable dream scrolls.
+
+## 📸 Screenshots
+| Tome View | Dream Library | Reflections |
+| :---: | :---: | :---: |
+| <img src="screens/tome-view.png" alt="Tome View Screenshot" width="100%"> | <img src="screens/dream-stack.png" alt="Dream Library Screenshot" width="100%"> | <img src="screens/reflections-view.png" alt="Reflections Screenshot" width="100%"> |
+
+---
+
+## 🚀 Features
+- **✍️ Chronicle Your Dreams:** Elegant book-like journaling interface with AI-powered refinement.
+- **✨ "Refine with Magic":** Use AI to transform raw notes into immersive, well-written prose.
+- **📜 Dream Library:** Visual stack of dream scrolls, full-text search, flippable dream cards.
+- **📊 Reflections & Streaks:** Track journaling streaks, see dream patterns, and receive AI-generated "Quote of the Night."
+- **🏷️ Categorization & Tagging:** Auto-categorize (Serene, Strange, Nightmare, Epic) and add custom tags.
+- **🔒 Privacy First:** Dreams stored locally only. No data leaves your browser.
+- **🖼️ Export:** Save favorite dreams as images for personal use.
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend:** React 19
+- **Build Tool:** Vite
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS + Custom parchment CSS
+- **Routing:** React Router
+- **Image Export:** html2canvas
+
+---
+
+## ⚙️ Technical Overview
+DreamTome is not a standard CRUD app. It's handcrafted, animated, and immersive. The UI is skeuomorphic: parchment cards, candles, wax seals, artifacts. Offline local storage model, no external frameworks beyond Tailwind and custom CSS.
+
+---
+
+## 📁 Project Structure
 ```
 src/
   components/
@@ -24,44 +88,42 @@ src/
   main.tsx
 ```
 
-## Key Components
-### FlippableDreamCard
-- Handles 3D flip
-- Insight panel logic
-- Scroll + clipping isolation
-- Audio + interaction layering
+## 🔑 Key Components
+- **FlippableDreamCard**: 3D flip animation, AI insight panel, scroll + audio layering
+- **DreamCardArtifacts**: Clickable floating artifacts, triggers flip/expand
+- **dreamInterpreter.ts**: Emotion detection, symbol extraction, AI interpretation synthesis
+- **useDreams.ts**: LocalStorage CRUD logic
 
-### DreamCardArtifacts
-- Floating clickable artifacts
-- Flip / expand triggers
+---
 
-### dreamInterpreter.ts
-- Emotion detection
-- Symbol extraction
-- Interpretation synthesis
+## 🏁 Getting Started
+### Prerequisites
+- [Node.js](https://nodejs.org/en/) (v18 or higher)
+- [pnpm](https://pnpm.io/) or npm/yarn
 
-### useDreams.ts
-- LocalStorage CRUD
-
-## Technical Constraints
-- No UI libraries  
-- Preserve parchment + gold aesthetic  
-- Maintain 3D flip integrity: perspective → preserve-3d → faces → backface hidden
-
-## Running Locally
-```
-npm install
-npm run dev
+### Installation
+```sh
+git clone https://github.com/harryneopotter/DreamTome.git
+cd DreamTome
+pnpm install # Or npm install
+git checkout main
 ```
 
-## Testing Checklist
-- Flip animations
-- Insight scroll
-- Modal interactions
-- Artifact layering
-- LocalStorage persistence
+### Running the Application
+```sh
+pnpm dev # Or npm run dev
+```
+Open your browser to `http://localhost:5173` (or address shown in your terminal)
 
-## Roadmap
+---
+
+## 🧪 Testing Checklist
+- Flip animations, modal interactions, artifact layering
+- LocalStorage persistence, insight scroll
+
+---
+
+## 🗺️ Roadmap
 - Dream Tome book UI
 - PDF export
 - Dream tagging
@@ -69,3 +131,16 @@ npm run dev
 - Symbol dictionary
 - Night-mode parchment
 - Streak calendar
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">Made with ❤️ by the DreamTome team.</p>
+
+---
+
+**Let me know if you'd like any changes or a direct Pull Request!**
