@@ -1,29 +1,3 @@
-## Summary
-The repository contains two README files: `README-o.md` (public-facing, visually appealing, feature-focused) and `README.md` (developer-focused, technical, and structural).
-
-To best represent the project, merge the best parts of both files:
-
-### Proposed Structure for the Merged README.md:
-
-1. **Project Logo and Badges** (from README-o.md)
-2. **Intro and Screenshots** (from README-o.md)
-3. **Feature List** (from README-o.md)
-4. **Technical Overview** (from README.md)
-5. **Tech Stack** (from README-o.md)
-6. **Project Structure & Key Components** (from README.md)
-7. **Getting Started/Installation** (from README-o.md, slightly tailored for pnpm and npm)
-8. **Roadmap & Testing** (from README.md)
-9. **License** (from README-o.md)
-  
-### Rationale
-- README-o.md is better for onboarding and selling the application to users.
-- README.md contains valuable technical/structural notes for contributors.
-- Merging offers the best experience for both new users and potential contributors.
-
-### Drafted Example for the New README.md:
-
----
-
 # ✨ DreamTome ✨
 
 <p align="center">
