@@ -10,20 +10,20 @@ export default function SplashScreen({ onEnter }: { onEnter: () => void }) {
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-[#2a1b0f]">
+    <div className="fixed inset-0 w-full h-screen overflow-hidden bg-[#2a1b0f]">
 
       {/* Candle */}
       <img
         src="/candle.svg"
         alt=""
-        className="absolute left-8 top-12 w-24 pointer-events-none select-none"
+        className="absolute left-8 top-12 w-24 h-auto pointer-events-none select-none"
       />
 
       {/* Quill */}
       <img
         src="/quill-ink.svg"
         alt=""
-        className="absolute right-10 top-20 w-24 pointer-events-none select-none"
+        className="absolute right-10 top-20 w-24 h-auto pointer-events-none select-none"
       />
 
       {/* Centered Book */}
@@ -36,7 +36,7 @@ export default function SplashScreen({ onEnter }: { onEnter: () => void }) {
         <img
           src="/dream-tome-book.svg"
           alt=""
-          className="w-[380px] drop-shadow-[0_18px_30px_rgba(0,0,0,0.6)]"
+          className="w-[380px] h-auto drop-shadow-[0_18px_30px_rgba(0,0,0,0.6)]"
         />
       </div>
 

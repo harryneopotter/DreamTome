@@ -309,7 +309,7 @@ export default function Reflections() {
             <h2 className="text-2xl font-bold mb-4 text-[var(--gold)] text-center glow-text" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
               ✨ Deeper Meaning
             </h2>
-            <p className="text-lg italic leading-relaxed text-center" style={{ fontFamily: "'Tangerine', cursive", color: 'var(--ink-brown)', fontWeight: 700, fontSize: '1.6rem' }}>
+            <p className="text-lg italic leading-relaxed text-center" style={{ fontFamily: "'Tangerine', cursive", color: 'var(--gold)', fontWeight: 700, fontSize: '1.6rem' }}>
               {quoteInterpretation}
             </p>
           </div>
