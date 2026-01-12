@@ -131,7 +131,7 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
               )}
             </div>
 
-            <h2 className="text-3xl font-bold text-[var(--burgundy)] mb-2" style={{ fontFamily: "'Cormorant Unicase', serif" }}>
+            <h2 className="text-3xl font-bold text-[var(--burgundy)] mb-2 break-words" style={{ fontFamily: "'Cormorant Unicase', serif" }}>
               {dream.title}
             </h2>
             <p className="text-sm opacity-60" style={{ fontFamily: 'Spectral, serif' }}>
@@ -199,7 +199,7 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
                 </div>
               )}
 
-              <p className="leading-relaxed whitespace-pre-line text-lg" style={{ fontFamily: 'Spectral, serif' }}>
+              <p className="leading-relaxed whitespace-pre-wrap break-words text-lg" style={{ fontFamily: 'Spectral, serif', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                 {viewMode === 'story' && dream.prose ? dream.prose : dream.content}
               </p>
             </div>

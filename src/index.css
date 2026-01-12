@@ -388,42 +388,50 @@ h6 {
 
 /* === CRITICAL: Dream Stack ALWAYS Above Artifacts === */
 /* === CRITICAL: Dream Stack (Grid Layout) === */
+/* === CRITICAL: Dream Stack (Flex Layout for Stability) === */
 .dream-stack {
   position: relative;
   width: 100%;
-  max-width: 1000px;
-  /* Increased width for grid */
+  max-width: 1200px;
   margin: 2rem auto;
-  z-index: 200000 !important;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  padding: 2rem;
+  perspective: 1000px;
 }
 
 .dream-sheet {
+  position: relative;
   background: transparent;
   padding: 0;
   margin: 0;
   transform: none;
-  /* Removed rotation */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease;
   cursor: pointer;
-  position: relative;
-  z-index: 10;
-  min-height: 240px;
+  z-index: 1;
+  flex: 0 0 280px;
+  /* Fixed width */
+  width: 280px;
+  min-height: 400px;
+  /* Taller to fit content */
   height: auto;
+  display: block;
 }
 
 .dream-sheet:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
   z-index: 20;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* Removed nth-child rotations to prevent collision */
+/* Clear any nth-child rotations explicitly */
 .dream-sheet:nth-child(n) {
   --rotation: 0deg;
+  margin-top: 0 !important;
+  transform: none;
 }
 
 
