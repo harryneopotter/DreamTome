@@ -32,23 +32,23 @@ const cueDefinitions: Record<SoundCue, CueDefinition> = {
   },
 
   sealPop: {
-    volume: 0.6,
+    volume: 0.3, // Reduced from 0.6
     build: (ctx) => createPopBuffer(ctx, { duration: 0.32, seed: 203, baseFreq: 540 }),
   },
   flipBack: {
-    volume: 0.55,
+    volume: 0.25, // Reduced from 0.55
     build: (ctx) => createRustleBuffer(ctx, { duration: 0.58, seed: 305, shimmer: 0.28, sweepDown: true }),
   },
   hoverGlow: {
-    volume: 0.4,
+    volume: 0.15, // Reduced from 0.4
     build: (ctx) => createGlowBuffer(ctx, { duration: 0.45, seed: 407 }),
   },
   bookOpen: {
-    volume: 0.65,
+    volume: 0.3, // Reduced from 0.65
     build: (ctx) => createBookOpenBuffer(ctx),
   },
   pageRustle: {
-    volume: 0.48,
+    volume: 0.2, // Reduced from 0.48
     build: (ctx) => createRustleBuffer(ctx, { duration: 0.7, seed: 509, shimmer: 0.34, brightness: 0.58 }),
   },
   ambientCandle: {

@@ -78,7 +78,7 @@ export default function Reflections() {
     setSelectedCategory(null);
   };
 
-  const categoryDreams = selectedCategory 
+  const categoryDreams = selectedCategory
     ? dreams.filter(d => d.category === selectedCategory)
     : [];
 
@@ -117,8 +117,8 @@ export default function Reflections() {
                 {streakData.currentStreak >= 7
                   ? 'A week of dreams! Your dedication illuminates the path.'
                   : streakData.currentStreak > 0
-                  ? 'Keep the flame burning bright through consistent journaling.'
-                  : 'Begin anew — every journey starts with a single step.'}
+                    ? 'Keep the flame burning bright through consistent journaling.'
+                    : 'Begin anew — every journey starts with a single step.'}
               </div>
             </div>
           </div>
@@ -137,8 +137,8 @@ export default function Reflections() {
                 {streakData.longestStreak >= 30
                   ? 'A legendary feat! Your commitment to dreams is unwavering.'
                   : streakData.longestStreak >= 7
-                  ? 'Your persistence has forged a remarkable record.'
-                  : 'Build your legacy one dream at a time.'}
+                    ? 'Your persistence has forged a remarkable record.'
+                    : 'Build your legacy one dream at a time.'}
               </div>
             </div>
           </div>
@@ -157,8 +157,8 @@ export default function Reflections() {
                 {streakData.totalDays >= 50
                   ? 'Your collection spans countless nights — a true chronicle of the soul.'
                   : streakData.totalDays >= 10
-                  ? 'Each day adds another page to your tome of dreams.'
-                  : 'The beginning of an epic journey through your subconscious.'}
+                    ? 'Each day adds another page to your tome of dreams.'
+                    : 'The beginning of an epic journey through your subconscious.'}
               </div>
             </div>
           </div>
@@ -226,7 +226,7 @@ export default function Reflections() {
 
         {/* Quote of the Night */}
         {quote && (
-          <div 
+          <div
             className="quote-card parchment-panel p-6 mb-6 border-2 border-[var(--gold)] text-center cursor-pointer relative"
             onClick={() => setShowQuoteInterpretation(true)}
           >
@@ -309,7 +309,7 @@ export default function Reflections() {
             <h2 className="text-2xl font-bold mb-4 text-[var(--gold)] text-center glow-text" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
               ✨ Deeper Meaning
             </h2>
-            <p className="text-lg italic leading-relaxed text-center" style={{ fontFamily: "'Tangerine', cursive", color: 'var(--gold)', fontWeight: 700, fontSize: '1.6rem' }}>
+            <p className="text-lg italic leading-relaxed text-center" style={{ fontFamily: "'Tangerine', cursive", color: 'var(--gold)', fontWeight: 700, fontSize: '2.2rem' }}>
               {quoteInterpretation}
             </p>
           </div>
