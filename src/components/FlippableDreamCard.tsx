@@ -38,23 +38,14 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
   const insightScrollRef = useRef<HTMLDivElement | null>(null);
   const { play } = useSound();
 
-  const [cardHeight, setCardHeight] = useState<number | null>(null);
+
   const tags = dream.tags ?? [];
 
   useEffect(() => {
     setInsight(getDreamInsight(dream.content));
   }, [dream.content]);
 
-  useEffect(() => {
-    const measure = () => {
-      if (frontFaceRef.current) {
-        setCardHeight(frontFaceRef.current.offsetHeight);
-      }
-    };
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [dream]);
+
 
   useEffect(() => {
     if (!isFlipped) return;
@@ -112,16 +103,20 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
           perspective: '1500px',
           transformStyle: 'preserve-3d',
           zIndex: Z_INDEX.CARD_FLIPPED,
+          height: '100%', // Ensure it takes full height of parent
+          minHeight: '240px', // Fallback minimum
         }}
       >
         <div
           style={{
             width: '100%',
-            height: cardHeight ? `${cardHeight}px` : 'auto',
+            height: '100%', // Fill the parent container
             transformStyle: 'preserve-3d',
             transition: 'transform 0.7s ease-in-out',
             transform: isFlipped ? 'rotateY(180deg) scale(1.05)' : 'rotateY(0deg)',
-            position: 'relative',
+            position: 'absolute',
+            top: 0,
+            left: 0,
           }}
         >
           {/* FRONT */}
@@ -134,6 +129,7 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
               borderRadius: '12px',
               boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
               position: 'absolute',
+              zIndex: isFlipped ? 0 : 2, // Front is top when NOT flipped
             }}
             onClick={flipToInsight}
           >
@@ -185,22 +181,30 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
             className="absolute inset-0"
             style={{
               transform: 'rotateY(180deg)',
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'visible', // Ensure it renders even if browser math is fuzzy
+              WebkitBackfaceVisibility: 'visible',
               borderRadius: '16px',
+              border: '2px solid #d1b48b', // Restore the border aesthetic
               overflow: 'hidden',
               position: 'absolute',
               display: 'flex',
               flexDirection: 'column',
+              backgroundColor: '#f4ead6',
+              backgroundImage: 'linear-gradient(135deg, #f4ead6 0%, #ede0c4 100%)',
+              opacity: 1,
+              zIndex: isFlipped ? 50 : 0,
+              width: '100%',
+              height: '100%',
+              transformStyle: 'preserve-3d',
             }}
           >
             <div
               style={{
                 flex: 1,
                 display: 'flex',
+                width: '100%',
+                height: '100%',
                 flexDirection: 'column',
-                margin: '10px',
-                padding: '18px 20px',
                 background: 'linear-gradient(180deg, #f7ecd1, #e8d9b8)',
                 borderRadius: '14px',
                 border: '3px solid #d7c287',
@@ -217,6 +221,7 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
                   overflowY: 'auto',
                   paddingRight: '10px',
                 }}
+                className="no-scrollbar"
               >
                 <h3 style={{ color: '#7a5c40', fontSize: '0.9rem' }}>EMOTION</h3>
                 <p
@@ -292,7 +297,7 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {isFlipped && (
         <div
@@ -302,7 +307,8 @@ export default function FlippableDreamCard({ dream, onExpand }: FlippableDreamCa
             background: 'radial-gradient(circle at center, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.45) 100%)',
           }}
         />
-      )}
+      )
+      }
     </>
   );
 }

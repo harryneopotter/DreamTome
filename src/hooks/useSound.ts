@@ -15,7 +15,7 @@ type SoundCue = (typeof SOUND_CUES)[number];
 interface CueDefinition {
   volume: number;
   loop?: boolean;
-  build: (context: AudioContext) => AudioBuffer;
+  build: (context: AudioContext) => AudioBuffer | Promise<AudioBuffer>;
 }
 
 interface LoopHandle {
@@ -28,7 +28,7 @@ const LOOPING_CUE = new Set<SoundCue>(['ambientCandle']);
 const cueDefinitions: Record<SoundCue, CueDefinition> = {
   pageTurn: {
     volume: 0.5,
-    build: (ctx) => createRustleBuffer(ctx, { duration: 0.55, seed: 101, shimmer: 0.2, brightness: 0.65 }),
+    build: (ctx) => createPageTurnBuffer(ctx),
   },
   sealPop: {
     volume: 0.6,
@@ -82,16 +82,27 @@ function ensureContext(): AudioContext | null {
   return sharedContext;
 }
 
-function obtainBuffer(cue: SoundCue, context: AudioContext): AudioBuffer {
+function obtainBuffer(cue: SoundCue, context: AudioContext): AudioBuffer | Promise<AudioBuffer> {
   const existing = bufferCache.get(cue);
   if (existing) {
     return existing;
   }
 
   const definition = cueDefinitions[cue];
-  const buffer = definition.build(context);
-  bufferCache.set(cue, buffer);
-  return buffer;
+  const result = definition.build(context);
+
+  if (result instanceof Promise) {
+    const promise = result.then(buffer => {
+      bufferCache.set(cue, buffer);
+      return buffer;
+    });
+    // Cache the promise temporarily if needed, but for now we just return it
+    // In a more complex system we might cache the promise to prevent double-fetching
+    return promise;
+  }
+
+  bufferCache.set(cue, result);
+  return result;
 }
 
 export function useSound() {
@@ -126,8 +137,15 @@ export function useSound() {
       return;
     }
 
-    const startPlayback = () => {
-      const buffer = obtainBuffer(cue, context);
+    const startPlayback = async () => {
+      let buffer: AudioBuffer;
+      try {
+        buffer = await obtainBuffer(cue, context);
+      } catch (e) {
+        console.error(`Failed to load sound: ${cue}`, e);
+        return;
+      }
+
       const source = context.createBufferSource();
       source.buffer = buffer;
       source.loop = Boolean(definition.loop);
@@ -338,4 +356,24 @@ function seededRandom(seed: number): () => number {
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
+}
+
+function createPageTurnBuffer(context: AudioContext): AudioBuffer {
+  // A soft, crisp page turn sound
+  return createBuffer(context, 0.45, 808, ({ progress, rand }) => {
+    // Envelope: sharp attack, smooth decay
+    const envelope = Math.pow(Math.sin(Math.PI * progress), 0.8) * Math.pow(1 - progress, 1.2);
+
+    // Layers
+    const baseNoise = rand() * 0.5;
+
+    // Whoosh component (filter sweep simulation)
+    const sweepFn = Math.sin(progress * Math.PI);
+    const whoosh = (rand() * sweepFn) * 0.3;
+
+    // Crackle/Paper texture
+    const texture = (rand() > 0.8 ? rand() : 0) * 0.1 * (1 - progress);
+
+    return (baseNoise + whoosh + texture) * envelope;
+  });
 }
