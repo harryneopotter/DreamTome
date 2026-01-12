@@ -36,7 +36,7 @@ export default function MedievalArtifactNav() {
         to="/dreams"
         onClick={handleArtifactClick}
         className={({ isActive }) =>
-          `artifact waxseal absolute bottom-[5%] left-1/2 transform -translate-x-1/2 w-[80px] md:w-[100px] hover:scale-110 transition-transform duration-300 z-50 ${isActive ? 'active scale-110 drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]' : 'opacity-90 hover:opacity-100'}`
+          `artifact waxseal absolute bottom-[10%] left-1/2 transform -translate-x-1/2 w-[80px] md:w-[100px] hover:scale-110 transition-transform duration-300 z-50 ${isActive ? 'active scale-110 drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]' : 'opacity-90 hover:opacity-100'}`
         }
         style={{ backgroundImage: 'none' }} // Override existing CSS
         title="Dream Scrolls"

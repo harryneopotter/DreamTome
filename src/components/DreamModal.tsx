@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Dream } from '../types';
 import { X, Edit, Trash } from './Icons';
 import { useDreams } from '../hooks/useDreams';
@@ -69,7 +70,7 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
 
   const config = categoryConfig[dream.category];
 
-  return (
+  return createPortal(
     <>
       <div
         className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 fade-in"
@@ -211,6 +212,7 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
           onClose={() => setShowErrorToast(false)}
         />
       )}
-    </>
+    </>,
+    document.body
   );
 }
