@@ -16,22 +16,23 @@ function App() {
     };
   }, []);
 
-  if (!entered) {
-    return <SplashScreen onEnter={() => setEntered(true)} />;
-  }
-
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Tome />} />
-          <Route path="tome" element={<Tome />} />
-          <Route path="dreams" element={<DreamLibrary />} />
-          <Route path="reflections" element={<Reflections />} />
-        </Route>
-      </Routes>
-    </Router>
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Tome />} />
+            <Route path="tome" element={<Tome />} />
+            <Route path="dreams" element={<DreamLibrary />} />
+            <Route path="reflections" element={<Reflections />} />
+          </Route>
+        </Routes>
+      </Router>
+      {!entered && <SplashScreen onEnter={() => setEntered(true)} />}
+    </>
   );
 }
+
+
 
 export default App;
