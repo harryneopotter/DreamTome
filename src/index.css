@@ -400,17 +400,16 @@ h6 {
 .dream-sheet {
   background: transparent;
   padding: 0;
-  margin-top: -180px;
+  margin-top: 0;
+  /* Fixed: Removed negative margin to prevent click overlapping */
   transform: rotate(var(--rotation, 0deg));
   transition: transform 0.3s ease, margin-top 0.3s ease;
   cursor: pointer;
   position: relative;
   z-index: 10;
-  min-height: 240px;
-  /* Fixed height for consistency */
-  max-height: 240px;
-  /* Prevent cards from growing */
-  /* Remove overflow:hidden to allow 3D flip to work without clipping */
+  min-height: 320px;
+  /* Increased height for better proportions */
+  height: auto;
 }
 
 .dream-sheet:first-child {
@@ -426,7 +425,8 @@ h6 {
 }
 
 .dream-sheet:hover {
-  margin-top: -160px;
+  margin-top: -10px;
+  /* Slight lift only */
   transform: scale(1.03) rotate(0deg) rotateX(2deg) rotateY(3deg);
   z-index: 20;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
