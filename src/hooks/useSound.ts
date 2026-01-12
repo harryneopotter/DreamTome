@@ -27,9 +27,10 @@ const LOOPING_CUE = new Set<SoundCue>(['ambientCandle']);
 
 const cueDefinitions: Record<SoundCue, CueDefinition> = {
   pageTurn: {
-    volume: 0.5,
+    volume: 0.12, // Much softer volume
     build: (ctx) => createPageTurnBuffer(ctx),
   },
+
   sealPop: {
     volume: 0.6,
     build: (ctx) => createPopBuffer(ctx, { duration: 0.32, seed: 203, baseFreq: 540 }),
@@ -359,20 +360,21 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function createPageTurnBuffer(context: AudioContext): AudioBuffer {
-  // A soft, crisp page turn sound
-  return createBuffer(context, 0.45, 808, ({ progress, rand }) => {
-    // Envelope: sharp attack, smooth decay
-    const envelope = Math.pow(Math.sin(Math.PI * progress), 0.8) * Math.pow(1 - progress, 1.2);
+  // A very soft, subtle paper swish
+  return createBuffer(context, 0.35, 808, ({ progress, rand }) => {
+    // Envelope: smoother attack, quick decay
+    const envelope = Math.pow(Math.sin(Math.PI * progress), 0.6) * Math.pow(1 - progress, 2);
 
-    // Layers
-    const baseNoise = rand() * 0.5;
+    // Layers - greatly reduced high frequency noise
+    // Smoothed noise (simple low-pass approximation)
+    const baseNoise = (rand() + rand()) * 0.15;
 
-    // Whoosh component (filter sweep simulation)
+    // Whoosh component (main body)
     const sweepFn = Math.sin(progress * Math.PI);
-    const whoosh = (rand() * sweepFn) * 0.3;
+    const whoosh = (rand() * sweepFn) * 0.2;
 
-    // Crackle/Paper texture
-    const texture = (rand() > 0.8 ? rand() : 0) * 0.1 * (1 - progress);
+    // Texture (minimized crackle)
+    const texture = (rand() > 0.9 ? rand() : 0) * 0.05 * (1 - progress);
 
     return (baseNoise + whoosh + texture) * envelope;
   });
