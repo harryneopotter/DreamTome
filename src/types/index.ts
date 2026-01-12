@@ -7,13 +7,16 @@ export interface Dream {
   originalContent?: string;
   date: string;
   category: 'Serene' | 'Strange' | 'Nightmare' | 'Epic';
-  tags?: DreamTag[];
+  tags?: string[];
   isTest?: boolean;
+  prose?: string;
+  interpretation?: string;
+  mood?: string;
 }
 
 export interface DreamInput {
   title: string;
   content: string;
   originalContent?: string;
-  tags?: DreamTag[];
+  tags?: string[];
 }

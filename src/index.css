@@ -387,53 +387,43 @@ h6 {
 }
 
 /* === CRITICAL: Dream Stack ALWAYS Above Artifacts === */
+/* === CRITICAL: Dream Stack (Grid Layout) === */
 .dream-stack {
   position: relative;
   width: 100%;
-  max-width: 650px;
+  max-width: 1000px;
+  /* Increased width for grid */
   margin: 2rem auto;
-  perspective: 1000px;
   z-index: 200000 !important;
-  /* Much higher than artifacts */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
 }
 
 .dream-sheet {
   background: transparent;
   padding: 0;
-  margin-top: 0;
-  /* Fixed: Removed negative margin to prevent click overlapping */
-  transform: rotate(var(--rotation, 0deg));
-  transition: transform 0.3s ease, margin-top 0.3s ease;
+  margin: 0;
+  transform: none;
+  /* Removed rotation */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   position: relative;
   z-index: 10;
   min-height: 240px;
-  /* Fixed: Reverted to original height */
   height: auto;
 }
 
-.dream-sheet:first-child {
-  margin-top: 0;
-}
-
-.dream-sheet:nth-child(odd) {
-  --rotation: -1.5deg;
-}
-
-.dream-sheet:nth-child(even) {
-  --rotation: 1.2deg;
-}
-
 .dream-sheet:hover {
-  margin-top: -10px;
-  /* Slight lift only */
-  transform: scale(1.03) rotate(0deg) rotateX(2deg) rotateY(3deg);
+  transform: translateY(-5px);
   z-index: 20;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
-.dream-sheet:first-child:hover {
-  margin-top: 0;
+/* Removed nth-child rotations to prevent collision */
+.dream-sheet:nth-child(n) {
+  --rotation: 0deg;
 }
 
 

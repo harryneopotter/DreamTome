@@ -10,6 +10,7 @@ import { exportDreamAsPNG } from '../utils/exportDream';
 import ArcaneButton from './ArcaneButton';
 import { useSound } from '../hooks/useSound';
 import { Z_INDEX } from '../constants/zIndex';
+import { generateDreamProse, analyzeDream } from '../services/gemini';
 
 interface DreamModalProps {
   dream: Dream;
@@ -27,6 +28,8 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(dream.content);
   const [isExporting, setIsExporting] = useState(false);
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [viewMode, setViewMode] = useState<'original' | 'story'>(dream.prose ? 'story' : 'original');
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -36,6 +39,33 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
   const handleSave = () => {
     updateDream(dream.id, { content: editedContent });
     setIsEditing(false);
+  };
+
+  const handleEnhance = async () => {
+    setIsEnhancing(true);
+    play('hoverGlow');
+    try {
+      // Parallel execution for speed
+      const [prose, analysis] = await Promise.all([
+        generateDreamProse(dream.content),
+        analyzeDream(dream.content)
+      ]);
+
+      updateDream(dream.id, {
+        prose,
+        interpretation: analysis.interpretation,
+        mood: analysis.mood,
+        tags: analysis.tags ? [...(dream.tags || []), ...analysis.tags] : dream.tags
+      });
+
+      setViewMode('story');
+      play('bookOpen');
+    } catch (error) {
+      console.error("Enhancement failed:", error);
+      setShowErrorToast(true);
+    } finally {
+      setIsEnhancing(false);
+    }
   };
 
   const handleDelete = () => {
@@ -90,9 +120,17 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
           </button>
 
           <div className="mb-4">
-            <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${config.color} mb-3`}>
-              {config.emoji} {dream.category}
-            </span>
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${config.color}`}>
+                {config.emoji} {dream.category}
+              </span>
+              {dream.mood && (
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200">
+                  ✨ {dream.mood}
+                </span>
+              )}
+            </div>
+
             <h2 className="text-3xl font-bold text-[var(--burgundy)] mb-2" style={{ fontFamily: "'Cormorant Unicase', serif" }}>
               {dream.title}
             </h2>
@@ -105,6 +143,14 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
               })}
             </p>
           </div>
+
+          {/* AI Insights Section */}
+          {dream.interpretation && !isEditing && (
+            <div className="mb-6 p-4 bg-[var(--parchment-dark)]/5 rounded-lg border border-[var(--parchment-dark)]/20 italic text-[var(--ink-brown)]">
+              <p className="font-bold text-xs uppercase tracking-widest opacity-60 mb-2">My Interpretation</p>
+              <p className="text-lg" style={{ fontFamily: "'Tangerine', cursive" }}>{dream.interpretation}</p>
+            </div>
+          )}
 
           {isEditing ? (
             <div className="mb-6">
@@ -132,14 +178,54 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
               </div>
             </div>
           ) : (
-            <div className="mb-6">
-              <p className="leading-relaxed whitespace-pre-line" style={{ fontFamily: 'Spectral, serif' }}>
-                {dream.content}
+            <div className="mb-6 relative">
+              {/* View Toggle */}
+              {dream.prose && (
+                <div className="flex justify-end mb-2">
+                  <div className="bg-[var(--parchment-dark)]/10 p-1 rounded-full inline-flex">
+                    <button
+                      onClick={() => setViewMode('original')}
+                      className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${viewMode === 'original' ? 'bg-white shadow text-[var(--burgundy)]' : 'text-[var(--ink-brown)] opacity-60'}`}
+                    >
+                      Notes
+                    </button>
+                    <button
+                      onClick={() => setViewMode('story')}
+                      className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${viewMode === 'story' ? 'bg-white shadow text-[var(--burgundy)]' : 'text-[var(--ink-brown)] opacity-60'}`}
+                    >
+                      Story
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <p className="leading-relaxed whitespace-pre-line text-lg" style={{ fontFamily: 'Spectral, serif' }}>
+                {viewMode === 'story' && dream.prose ? dream.prose : dream.content}
               </p>
             </div>
           )}
 
           <div className="flex flex-wrap gap-3 pt-4 border-t border-[var(--parchment-dark)]/20">
+            {/* MAGIC BUTTON */}
+            {!isEditing && !dream.prose && (
+              <ArcaneButton
+                onClick={handleEnhance}
+                disabled={isEnhancing}
+                className="flex items-center gap-2 bg-gradient-to-r from-indigo-900 to-purple-900 text-white border-none shadow-lg hover:shadow-indigo-500/30"
+              >
+                {isEnhancing ? (
+                  <>
+                    <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+                    Consulting Oracles...
+                  </>
+                ) : (
+                  <>
+                    <span>✨</span> Unveil Mysteries
+                  </>
+                )}
+              </ArcaneButton>
+            )}
+
             <ArcaneButton
               onClick={handleExport}
               disabled={isExporting}
@@ -157,7 +243,7 @@ export default function DreamModal({ dream, onClose }: DreamModalProps) {
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                   </svg>
-                  Export Card (PNG)
+                  Export Card
                 </>
               )}
             </ArcaneButton>
