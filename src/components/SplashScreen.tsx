@@ -27,7 +27,7 @@ export default function SplashScreen({ onEnter }: SplashScreenProps) {
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#1c1109] transition-opacity duration-1000 ease-in-out ${start ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+    <div className={`fixed inset-0 z-[200] flex items-center justify-center overflow-hidden bg-[#1c1109] transition-opacity duration-1000 ease-in-out ${start ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
       {/* 
         BACKGROUND: 
         Replicating/Using the .desk-root style for consistency with the vertical wood grain. 
