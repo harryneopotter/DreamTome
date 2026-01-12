@@ -1,5 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import { useSound } from '../hooks/useSound';
+// Import high-fidelity artifacts
+import CandleArtifact from '../assets/candle-artifact.svg';
+import QuillArtifact from '../assets/quill-artifact.svg';
+import SealArtifact from '../assets/wax-seal-artifact.svg';
 
 export default function MedievalArtifactNav() {
   const { play } = useSound();
@@ -12,50 +16,47 @@ export default function MedievalArtifactNav() {
 
   return (
     <>
-      {/* Quill in Inkpot (Tome) */}
+      {/* Quill in Inkpot (Tome) - Top Right */}
       <NavLink
         to="/"
         onClick={handleArtifactClick}
         className={({ isActive }) =>
-          `artifact quill ${isActive ? 'active' : ''}`
+          `artifact quill absolute top-[20%] right-[10%] w-[120px] md:w-[160px] transform hover:scale-105 transition-transform duration-300 z-50 ${isActive ? 'active scale-105 drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]' : 'opacity-90 hover:opacity-100'}`
         }
-        style={{
-          backgroundImage: 'url(/quill-ink.svg)',
-        }}
+        style={{ backgroundImage: 'none' }} // Override existing CSS
         end
         title="Return to Tome"
       >
-        <span className="artifact-label">Tome</span>
+        <QuillArtifact className="w-full h-full drop-shadow-xl" />
+        <span className="artifact-label sr-only">Tome</span>
       </NavLink>
 
-      {/* Wax Seal (Dreams) */}
+      {/* Wax Seal (Dreams) - Bottom Center */}
       <NavLink
         to="/dreams"
         onClick={handleArtifactClick}
         className={({ isActive }) =>
-          `artifact waxseal ${isActive ? 'active' : ''}`
+          `artifact waxseal absolute bottom-[5%] left-1/2 transform -translate-x-1/2 w-[80px] md:w-[100px] hover:scale-110 transition-transform duration-300 z-50 ${isActive ? 'active scale-110 drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]' : 'opacity-90 hover:opacity-100'}`
         }
-        style={{
-          backgroundImage: 'url(/wax-seal.svg)',
-        }}
+        style={{ backgroundImage: 'none' }} // Override existing CSS
         title="Dream Scrolls"
       >
-        <span className="artifact-label">Dream Scrolls</span>
+        <SealArtifact className="w-full h-full drop-shadow-lg" />
+        <span className="artifact-label sr-only">Dream Scrolls</span>
       </NavLink>
 
-      {/* Candle (Reflections) */}
+      {/* Candle (Reflections) - Top Left */}
       <NavLink
         to="/reflections"
         onClick={handleArtifactClick}
         className={({ isActive }) =>
-          `artifact candle ${isActive ? 'active' : ''}`
+          `artifact candle absolute top-[15%] left-[10%] w-[100px] md:w-[140px] transform hover:scale-105 transition-transform duration-300 z-50 ${isActive ? 'active scale-105 drop-shadow-[0_0_20px_rgba(255,165,0,0.6)]' : 'opacity-90 hover:opacity-100'}`
         }
-        style={{
-          backgroundImage: 'url(/candle.svg)',
-        }}
+        style={{ backgroundImage: 'none' }} // Override existing CSS
         title="Reflections"
       >
-        <span className="artifact-label">Reflections</span>
+        <CandleArtifact className="w-full h-full drop-shadow-2xl" />
+        <span className="artifact-label sr-only">Reflections</span>
       </NavLink>
 
     </>

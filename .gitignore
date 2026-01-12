@@ -129,3 +129,4 @@ dist
 .genkit/servers/
 .genkit/traces_idx/
 .genkit/genkit.metadata
+nul

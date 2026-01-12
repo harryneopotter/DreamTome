@@ -1,0 +1,81 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Leather Texture Filter -->
+    <filter id="leatherNoise" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" result="noise" />
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 0" in="noise" result="coloredNoise" />
+      <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+      <feBlend mode="multiply" in="composite" in2="SourceGraphic" />
+    </filter>
+
+    <!-- Gold Shine & texture -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bf953f" />
+      <stop offset="25%" stop-color="#fcf6ba" />
+      <stop offset="50%" stop-color="#b38728" />
+      <stop offset="75%" stop-color="#fbf5b7" />
+      <stop offset="100%" stop-color="#aa771c" />
+    </linearGradient>
+    
+    <filter id="goldGlow">
+      <feGaussianBlur stdDeviation="2.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Maroon Leather Gradients -->
+    <linearGradient id="coverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5a0a0a" />
+      <stop offset="50%" stop-color="#801010" />
+      <stop offset="100%" stop-color="#400505" />
+    </linearGradient>
+    
+    <!-- Drop Shadow -->
+    <filter id="bookShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="15" />
+      <feOffset dx="10" dy="20" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.6"/>
+      </feComponentTransfer>
+      <feMerge> 
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" /> 
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g id="dream-tome-book" transform="translate(300, 300)" filter="url(#bookShadow)">
+    <!-- Back Cover (Thickness) -->
+    <path d="M-190,-230 L210,-150 L220,240 L-180,160 Z" fill="#2a0505" />
+    
+    <!-- Pages Block -->
+    <path d="M-185,155 L-175,165 L215,245 L205,235 Z" fill="#d4c5a3" />
+    <path d="M215,245 L215,-145 L210,-150 L210,240 Z" fill="#e8dac0" />
+    
+    <!-- Front Cover Surface -->
+    <g class="tome-cover-group">
+      <path d="M-200,-240 L200,-160 L210,230 L-190,150 Z" fill="url(#coverGradient)" filter="url(#leatherNoise)" />
+      
+      <!-- Gold Filigree Border -->
+      <path d="M-180,-220 L180,-148 L188,212 L-172,140 Z" fill="none" stroke="url(#goldGradient)" stroke-width="6" />
+      <path d="M-170,-205 L170,-137 L177,202 L-163,134 Z" fill="none" stroke="url(#goldGradient)" stroke-width="2" opacity="0.7" />
+      
+      <!-- Corner Ornaments -->
+      <g fill="url(#goldGradient)">
+        <circle cx="-180" cy="-220" r="8" />
+        <circle cx="180" cy="-148" r="8" />
+        <circle cx="188" cy="212" r="8" />
+        <circle cx="-172" cy="140" r="8" />
+      </g>
+
+      <!-- Center Title -->
+      <g transform="rotate(11)">
+        <text x="0" y="-20" font-family="Spectral, serif" font-size="64" font-weight="900" fill="url(#goldGradient)" text-anchor="middle" filter="url(#goldGlow)" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6)">Dream</text>
+        <text x="0" y="50" font-family="Spectral, serif" font-size="64" font-weight="900" fill="url(#goldGradient)" text-anchor="middle" filter="url(#goldGlow)" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6)">Tome</text>
+      </g>
+      
+      <!-- Decorative Center Element -->
+      <path d="M-20,-90 Q0,-110 20,-90 Q0,-70 -20,-90" fill="url(#goldGradient)" transform="rotate(11)" />
+      <path d="M-20,90 Q0,70 20,90 Q0,110 -20,90" fill="url(#goldGradient)" transform="rotate(11)" />
+    </g>
+  </g>
+</svg>
