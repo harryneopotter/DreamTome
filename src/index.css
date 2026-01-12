@@ -407,8 +407,8 @@ h6 {
   cursor: pointer;
   position: relative;
   z-index: 10;
-  min-height: 320px;
-  /* Increased height for better proportions */
+  min-height: 240px;
+  /* Fixed: Reverted to original height */
   height: auto;
 }
 
@@ -786,11 +786,13 @@ h6 {
   }
 
   .dream-sheet {
-    margin-top: -160px;
+    margin-top: 0;
+    /* Fixed: No negative margin */
   }
 
   .dream-sheet:hover {
-    margin-top: -140px;
+    margin-top: -5px;
+    /* Subtle lift */
   }
 
   .reflection-tile {
