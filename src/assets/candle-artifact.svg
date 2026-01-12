@@ -1,0 +1,81 @@
+<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="flameGradient" cx="50%" cy="80%" r="50%">
+      <stop offset="0%" stop-color="#fff" />
+      <stop offset="20%" stop-color="#fff293" />
+      <stop offset="60%" stop-color="#ff8c00" />
+      <stop offset="100%" stop-color="transparent" />
+    </radialGradient>
+    
+    <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(255, 200, 80, 0.4)" />
+      <stop offset="100%" stop-color="transparent" />
+    </radialGradient>
+
+    <linearGradient id="brassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#967945" />
+      <stop offset="50%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#5e4823" />
+    </linearGradient>
+
+    <filter id="castShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8" />
+      <feOffset dx="5" dy="8" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#castShadow)">
+    <!-- Glow -->
+    <circle cx="150" cy="120" r="100" fill="url(#glowGradient)" class="flicker-glow" />
+
+    <!-- Holder -->
+    <g transform="translate(150, 280)">
+       <!-- Pan -->
+       <ellipse cx="0" cy="40" rx="50" ry="20" fill="url(#brassGradient)" stroke="#3e2f16" stroke-width="2" />
+       <ellipse cx="0" cy="35" rx="40" ry="15" fill="#3e2f16" opacity="0.3" />
+       
+       <!-- Loop Handle -->
+       <path d="M50,40 Q80,40 80,10 Q80,-20 50,-20 Q30,-20 30,10" fill="none" stroke="url(#brassGradient)" stroke-width="8" stroke-linecap="round" />
+    </g>
+
+    <!-- Candle Wax -->
+    <g transform="translate(150, 280)">
+      <rect x="-15" y="-120" width="30" height="150" fill="#fcf6e8" />
+      <path d="M-15,-120 Q0,-130 15,-120" fill="#fdfaf4" /> <!-- Top surface -->
+      <path d="M-15,30 Q0,40 15,30" fill="#fcf6e8" /> <!-- Bottom curve -->
+      
+      <!-- Drips -->
+      <path d="M-15,-100 Q-18,-80 -15,-60" stroke="#fcf6e8" stroke-width="4" stroke-linecap="round" />
+      <path d="M15,-90 Q18,-70 15,-50" stroke="#fcf6e8" stroke-width="4" stroke-linecap="round" />
+    </g>
+
+    <!-- Wick -->
+    <line x1="150" y1="160" x2="150" y2="150" stroke="#000" stroke-width="2" />
+
+    <!-- Flame -->
+    <g class="candle-flame" transform="translate(150, 150)">
+      <path d="M0,0 Q10,-30 0,-60 Q-10,-30 0,0" fill="url(#flameGradient)" />
+    </g>
+  </g>
+  
+  <style>
+    .flicker-glow { animation: flicker 3s infinite alternate; }
+    .candle-flame { animation: dance 0.2s infinite alternate ease-in-out; transform-origin: bottom center; }
+    
+    @keyframes flicker {
+      0% { opacity: 0.8; transform: scale(1); }
+      100% { opacity: 0.6; transform: scale(0.95); }
+    }
+    @keyframes dance {
+      0% { transform: scaleY(1) skewX(1deg); }
+      100% { transform: scaleY(1.05) skewX(-1deg); }
+    }
+  </style>
+</svg>

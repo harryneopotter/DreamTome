@@ -1,0 +1,30 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="waxGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a11a1a" />
+      <stop offset="80%" stop-color="#7a1a1a" />
+      <stop offset="100%" stop-color="#4a0a0a" />
+    </radialGradient>
+    <filter id="waxShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
+      <feOffset dx="1" dy="2" />
+      <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#waxShadow)" id="waxSeal">
+    <!-- Irregular Wax Shape -->
+    <path d="M50,10 C70,10 85,25 90,50 C95,75 75,90 50,90 C25,90 5,75 10,50 C15,25 30,10 50,10 Z" 
+          fill="url(#waxGradient)" />
+          
+    <path d="M50,15 C65,15 80,30 85,50 C90,70 70,85 50,85 C30,85 10,70 15,50 C20,30 35,15 50,15 Z" 
+          fill="none" stroke="#600" stroke-width="2" opacity="0.5" />
+
+    <!-- Gold Emblem (Diamond shape) -->
+    <g transform="translate(50, 50) scale(0.6)">
+      <path d="M0,-20 L15,0 L0,20 L-15,0 Z" fill="#d4af37" opacity="0.9" />
+      <circle cx="0" cy="0" r="28" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.6" />
+    </g>
+  </g>
+</svg>

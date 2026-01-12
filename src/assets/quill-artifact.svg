@@ -1,0 +1,40 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="quillShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
+      <feOffset dx="4" dy="6" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.4"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#quillShadow)" transform="translate(150, 150) rotate(15)">
+    <!-- Inkwell -->
+    <g transform="translate(0, 80)">
+      <rect x="-30" y="-30" width="60" height="50" rx="4" fill="#0c0c0c" stroke="#333" stroke-width="1" />
+      <!-- Glass Highlight -->
+      <path d="M-25,-25 L-25,15" stroke="rgba(255,255,255,0.2)" stroke-width="3" stroke-linecap="round" />
+      <!-- Rim -->
+      <ellipse cx="0" cy="-30" rx="30" ry="10" fill="#1a1a1a" stroke="#333" stroke-width="1" />
+      <!-- Ink Surface -->
+      <ellipse cx="0" cy="-30" rx="20" ry="6" fill="#000000" />
+    </g>
+
+    <!-- Quill -->
+    <g transform="translate(10, 50) rotate(-45)">
+      <!-- Shaft -->
+      <path d="M0,0 Q0,-150 10,-200" stroke="#f0e6d2" stroke-width="3" fill="none" />
+      
+      <!-- Right Vane -->
+      <path d="M0,-20 Q30,-60 10,-200 Q5,-150 0,-140" fill="#fff" opacity="0.9" />
+      
+      <!-- Left Vane -->
+      <path d="M0,-20 Q-30,-60 -10,-200 Q-5,-150 0,-140" fill="#f2f2f2" opacity="0.8" />
+    </g>
+  </g>
+</svg>
