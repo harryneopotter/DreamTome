@@ -16,7 +16,7 @@ function svgComponentPlugin(): Plugin {
       const raw = await readFile(id, 'utf8');
       const sanitized = raw
         .replace(/<\?xml[^>]*>/g, '')
-        .replace(/\r?\n/g, '')
+        .replace(/\r?\n/g, ' ')
         .replace(/`/g, '\\`')
         .replace(/\$\{/g, '\\${');
 

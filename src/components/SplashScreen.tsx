@@ -63,7 +63,8 @@ export default function SplashScreen({ onEnter }: SplashScreenProps) {
         {/* BOOK - Center */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[55%] w-[350px] md:w-[500px] pointer-events-auto z-20">
           <BookArtifact
-            className={`w-full h-full drop-shadow-2xl tome-kamui-target transition-all duration-700 ${start ? 'scale-0 rotate-180 opacity-0 blur-xl' : ''}`}
+            className={`w-full h-full drop-shadow-2xl tome-kamui-target transition-all duration-700 !bg-transparent ${start ? 'scale-0 rotate-180 opacity-0 blur-xl' : ''}`}
+            onClick={handleSealClick} style={{ cursor: 'pointer' }}
           />
         </div>
 

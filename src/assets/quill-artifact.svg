@@ -31,10 +31,10 @@
       <path d="M0,0 Q0,-150 10,-200" stroke="#f0e6d2" stroke-width="3" fill="none" />
       
       <!-- Right Vane -->
-      <path d="M0,-20 Q30,-60 10,-200 Q5,-150 0,-140" fill="#fff" opacity="0.9" />
+      <path d="M0,-20 Q30,-60 10,-200 Q5,-150 0,-140" fill="#f5f5dc" opacity="0.9" />
       
       <!-- Left Vane -->
-      <path d="M0,-20 Q-30,-60 -10,-200 Q-5,-150 0,-140" fill="#f2f2f2" opacity="0.8" />
+      <path d="M0,-20 Q-30,-60 -10,-200 Q-5,-150 0,-140" fill="#e0e0d0" opacity="0.8" />
     </g>
   </g>
 </svg>
