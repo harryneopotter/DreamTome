@@ -21,6 +21,11 @@ export default function SplashScreen({ onEnter }: SplashScreenProps) {
     return () => window.clearTimeout(handle);
   }, [start, onEnter]);
 
+  useEffect(() => {
+    document.body.classList.add('splash-active');
+    return () => document.body.classList.remove('splash-active');
+  }, []);
+
   const handleSealClick = () => {
     if (start) return;
     setStart(true);

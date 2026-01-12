@@ -1513,3 +1513,8 @@ h6 {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Hide artifacts when splash screen is active */
+body.splash-active .artifact {
+  display: none !important;
+}
