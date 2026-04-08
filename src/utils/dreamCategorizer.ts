@@ -1,34 +1,50 @@
+// Nightmare indicators
+const NIGHTMARE_KEYWORDS = [
+  'fear', 'scared', 'terror', 'nightmare', 'dark', 'chase', 'run',
+  'escape', 'death', 'blood', 'scream', 'monster', 'danger', 'trap',
+  'haunting', 'panic', 'dread'
+];
+
+// Serene indicators
+const SERENE_KEYWORDS = [
+  'peace', 'calm', 'gentle', 'soft', 'beautiful', 'garden', 'flower',
+  'meadow', 'sunshine', 'love', 'warm', 'comfort', 'safe', 'tranquil',
+  'serene', 'quiet', 'relaxed', 'happy'
+];
+
+// Epic indicators
+const EPIC_KEYWORDS = [
+  'battle', 'adventure', 'quest', 'journey', 'hero', 'fight', 'victory',
+  'magic', 'power', 'kingdom', 'warrior', 'legend', 'sword', 'dragon',
+  'epic', 'grand', 'destiny'
+];
+
 /**
  * Automatically categorizes dreams based on content analysis
  */
 export function categorizeDream(content: string): 'Serene' | 'Strange' | 'Nightmare' | 'Epic' {
   const lowerContent = content.toLowerCase();
   
-  // Nightmare indicators
-  const nightmareKeywords = [
-    'fear', 'scared', 'terror', 'nightmare', 'dark', 'chase', 'run',
-    'escape', 'death', 'blood', 'scream', 'monster', 'danger', 'trap',
-    'haunting', 'panic', 'dread'
-  ];
-  
-  // Serene indicators
-  const sereneKeywords = [
-    'peace', 'calm', 'gentle', 'soft', 'beautiful', 'garden', 'flower',
-    'meadow', 'sunshine', 'love', 'warm', 'comfort', 'safe', 'tranquil',
-    'serene', 'quiet', 'relaxed', 'happy'
-  ];
-  
-  // Epic indicators
-  const epicKeywords = [
-    'battle', 'adventure', 'quest', 'journey', 'hero', 'fight', 'victory',
-    'magic', 'power', 'kingdom', 'warrior', 'legend', 'sword', 'dragon',
-    'epic', 'grand', 'destiny'
-  ];
-  
-  // Count matches
-  const nightmareScore = nightmareKeywords.filter(kw => lowerContent.includes(kw)).length;
-  const sereneScore = sereneKeywords.filter(kw => lowerContent.includes(kw)).length;
-  const epicScore = epicKeywords.filter(kw => lowerContent.includes(kw)).length;
+  let nightmareScore = 0;
+  for (const kw of NIGHTMARE_KEYWORDS) {
+    if (lowerContent.includes(kw)) {
+      nightmareScore++;
+    }
+  }
+
+  let sereneScore = 0;
+  for (const kw of SERENE_KEYWORDS) {
+    if (lowerContent.includes(kw)) {
+      sereneScore++;
+    }
+  }
+
+  let epicScore = 0;
+  for (const kw of EPIC_KEYWORDS) {
+    if (lowerContent.includes(kw)) {
+      epicScore++;
+    }
+  }
   
   // Determine category
   if (nightmareScore > sereneScore && nightmareScore > epicScore) {
