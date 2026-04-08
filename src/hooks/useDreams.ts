@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Dream, DreamInput, DreamTag } from '../types';
 import { categorizeDream } from '../utils/dreamCategorizer';
 import { getUTCDateString } from '../utils/streakCalculator';
+import { sanitize, sanitizeArray } from '../utils/sanitizer';
 
 const STORAGE_KEY = 'dreamtome_dreams';
 const DREAM_DAYS_KEY = 'dreamtome_dream_days';
@@ -51,14 +52,15 @@ export function useDreams() {
 
   const addDream = (input: DreamInput) => {
     const now = new Date();
+    const sanitizedContent = sanitize(input.content);
     const newDream: Dream = {
       id: Date.now().toString(),
-      title: input.title,
-      content: input.content,
-      originalContent: input.originalContent,
+      title: sanitize(input.title),
+      content: sanitizedContent,
+      originalContent: input.originalContent ? sanitize(input.originalContent) : undefined,
       date: now.toISOString(),
-      category: categorizeDream(input.content),
-      tags: input.tags || [],
+      category: categorizeDream(sanitizedContent),
+      tags: input.tags ? sanitizeArray(input.tags) : [],
     };
 
     // Record the day for streak tracking
@@ -95,7 +97,19 @@ export function useDreams() {
   };
 
   const updateDream = (id: string, updates: Partial<Dream>) => {
-    saveDreams(dreams.map((d) => (d.id === id ? { ...d, ...updates } : d)));
+    const sanitizedUpdates: Partial<Dream> = { ...updates };
+
+    if (updates.title !== undefined) sanitizedUpdates.title = sanitize(updates.title);
+    if (updates.content !== undefined) sanitizedUpdates.content = sanitize(updates.content);
+    if (updates.prose !== undefined) sanitizedUpdates.prose = sanitize(updates.prose);
+    if (updates.interpretation !== undefined)
+      sanitizedUpdates.interpretation = sanitize(updates.interpretation);
+    if (updates.mood !== undefined) sanitizedUpdates.mood = sanitize(updates.mood);
+    if (updates.tags !== undefined) sanitizedUpdates.tags = sanitizeArray(updates.tags);
+    if (updates.originalContent !== undefined)
+      sanitizedUpdates.originalContent = sanitize(updates.originalContent);
+
+    saveDreams(dreams.map((d) => (d.id === id ? { ...d, ...sanitizedUpdates } : d)));
   };
 
   const deleteDream = (id: string) => {
