@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { categorizeDream } from './dreamCategorizer.ts';
+import { categorizeDream } from '../src/utils/dreamCategorizer.ts';
 
 test('dreamCategorizer: Serene when serene keywords dominate', () => {
   const result = categorizeDream('I felt so peace and calm in a beautiful garden.');
